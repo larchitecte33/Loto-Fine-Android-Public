@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activites.ConnectionActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/logo_secondaire">
+            </ImageView>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/vert"
+                android:text="@string/subtitle_connexion"
+                android:textSize="@dimen/text_size"></TextView>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10px"
+                        android:layout_weight="@dimen/weight_textview_creation_compte"
+                        android:text="@string/lbl_email"
+                        android:textSize="@dimen/text_size"></TextView>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10px"
+                        android:layout_weight="@dimen/weight_edit_creation_compte"
+                        android:ellipsize="start"
+                        android:gravity="center_horizontal"
+                        app:hintEnabled="false">
+                        <EditText
+                            android:id="@+id/co_edit_saisir_email"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="4px"
+                            android:background="@drawable/backwithborder"
+                            android:hint="@string/hint_saisir_email"
+                            android:inputType="textEmailAddress"
+                            android:textSize="@dimen/text_size"></EditText>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20px"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10px"
+                        android:layout_weight="@dimen/weight_textview_creation_compte"
+                        android:text="@string/lbl_mdp"
+                        android:textSize="@dimen/text_size"></TextView>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10px"
+                        android:layout_weight="@dimen/weight_edit_creation_compte"
+                        android:ellipsize="start"
+                        android:gravity="center_horizontal"
+                        app:hintEnabled="false"
+                        app:passwordToggleEnabled="true">
+                        <EditText
+                            android:id="@+id/co_edit_saisir_mdp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="4px"
+                            android:background="@drawable/backwithborder"
+                            android:hint="@string/hint_saisir_votre_mdp"
+                            android:inputType="textPassword"
+                            android:textSize="@dimen/text_size"></EditText>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_marginRight="50px">
+
+            <Button
+                android:id="@+id/bouton_annuler_connexion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginBottom="18dp"
+                android:backgroundTint="@color/violet"
+                android:textColor="@color/vert"
+                android:text="@string/texte_annuler"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_marginLeft="50px">
+
+            <Button
+                android:id="@+id/bouton_valider_connexion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:backgroundTint="@color/violet"
+                android:textColor="@color/vert"
+                android:text="@string/texte_valider"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

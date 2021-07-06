@@ -1,0 +1,69 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginTop="30px">
+    <TextView
+        android:id="@+id/mes_lots_adapter_nom_lot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="50px"
+        android:text="Jambon"
+        android:textSize="@dimen/text_size"></TextView>
+    <TextView
+        android:id="@+id/mes_lots_adapter_lieu_retrait"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="50px"
+        android:text="Lieu de retrait : Salle des associations 33210 Coimères"
+        android:textSize="@dimen/text_size"></TextView>
+    <TextView
+        android:id="@+id/mes_lots_adapter_lot_expedie"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="50px"
+        android:textColor="@color/vert"
+        android:text="Lot déjà retiré"
+        android:textSize="@dimen/text_size"></TextView>
+    <LinearLayout
+        android:id="@+id/mes_lots_adapter_layout_retirer_expedier_lot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/scrollView"
+        android:layout_gravity="center"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/mes_lots_adapter_bouton_retirer_sur_place"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:backgroundTint="@color/violet"
+            android:textColor="@color/vert"
+            android:text="Retirer sur place"
+            android:layout_marginRight="10px"
+            android:textSize="@dimen/text_size"/>
+
+        <Button
+            android:id="@+id/mes_lots_adapter_bouton_me_lexpedier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:backgroundTint="@color/violet"
+            android:textColor="@color/vert"
+            android:text="Me l'expédier"
+            android:layout_marginLeft="10px"
+            android:textSize="@dimen/text_size"/>
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginLeft="50px"
+        android:layout_marginRight="50px"
+        android:layout_marginTop="10px"
+        android:background="@color/violet"/>
+</LinearLayout>

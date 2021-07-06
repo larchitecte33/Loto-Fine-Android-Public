@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activites.ParametresActivity">
+
+    <RelativeLayout
+        android:id="@+id/layout_parametres"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/layoutAdresse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/lblAdresseServeur"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lbl_adresse_serveur"
+                android:textSize="@dimen/text_size">
+            </TextView>
+            <EditText
+                android:id="@+id/edit_adresse_serveur"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/lblAdresseServeur"
+                android:background="@drawable/backwithborder"
+                android:textSize="@dimen/text_size"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layoutAdresse">
+            <TextView
+                android:id="@+id/lbl_nb_secondes_avant_maj_infos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/edit_adresse_serveur"
+                android:text="@string/lbl_nb_secondes_avant_maj_infos"
+                android:textSize="@dimen/text_size">
+            </TextView>
+            <EditText
+                android:id="@+id/edit_nb_secondes_avant_maj_infos_tablette"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/lbl_nb_secondes_avant_maj_infos"
+                android:background="@drawable/backwithborder"
+                android:textSize="@dimen/text_size">
+            </EditText>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:layout_marginRight="50px">
+
+                <Button
+                    android:id="@+id/bouton_annuler_parametres"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_marginBottom="18dp"
+                    android:backgroundTint="@color/violet"
+                    android:textColor="@color/vert"
+                    android:text="@string/texte_annuler"
+                    android:textSize="@dimen/text_size"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:layout_marginLeft="50px">
+
+                <Button
+                    android:id="@+id/bouton_valider_parametres"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:backgroundTint="@color/violet"
+                    android:textColor="@color/vert"
+                    android:text="@string/texte_valider"
+                    android:textSize="@dimen/text_size"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

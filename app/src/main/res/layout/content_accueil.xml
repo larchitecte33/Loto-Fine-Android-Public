@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <TextView
+                android:id="@+id/text_connection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/texte_non_connecte"
+                android:background="@color/violet"
+                android:textColor="@color/vert"
+                android:paddingLeft="10px"
+                android:textSize="@dimen/text_size">
+
+            </TextView>
+
+            <ImageView
+                android:id="@+id/imageCartons"
+                android:scaleType="centerInside"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/logo_cartons"
+                android:layout_below="@id/text_connection"
+                android:contentDescription="@string/image_cartons_description"
+                />
+            <ImageView
+                android:id="@+id/logo_principal_cartons"
+                android:scaleType="centerInside"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/imageCartons"
+                android:src="@drawable/logo_principal"
+                android:contentDescription="@string/image_logo_pricipal_description"
+                />
+            <LinearLayout
+                android:id="@+id/layout_inscrire_desinscrire"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/logo_principal_cartons"
+                android:layout_centerHorizontal="true">
+                <Button
+                    android:id="@+id/bouton_minscrire"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:backgroundTint="@color/violet"
+                    android:text="@string/texte_minscrire"
+                    android:textColor="@color/vert"
+                    android:textSize="@dimen/text_size">
+                </Button>
+
+                <Button
+                    android:id="@+id/bouton_me_desinscrire"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="30px"
+                    android:layout_toRightOf="@id/bouton_minscrire"
+                    android:backgroundTint="@color/violet"
+                    android:text="@string/texte_me_desinscrire"
+                    android:textColor="@color/vert"
+                    android:textSize="@dimen/text_size"></Button>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/bouton_me_connecter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/layout_inscrire_desinscrire"
+                android:layout_centerHorizontal="true"
+                android:backgroundTint="@color/violet"
+                android:text="@string/texte_me_connecter"
+                android:textColor="@color/vert"
+                android:textSize="@dimen/text_size"></Button>
+
+            <LinearLayout
+                android:id="@+id/layout_rechercher_creer_partie"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/bouton_me_connecter"
+                android:layout_centerHorizontal="true">
+                <Button
+                    android:id="@+id/bouton_rechercher_partie"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:backgroundTint="@color/violet"
+                    android:text="Rechercher une&#10;partie à venir"
+                    android:textColor="@color/vert"
+                    android:textSize="@dimen/text_size"></Button>
+
+                <Button
+                    android:id="@+id/bouton_creer_partie"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="30px"
+                    android:layout_toRightOf="@id/bouton_rechercher_partie"
+                    android:backgroundTint="@color/violet"
+                    android:text="@string/texte_creer_partie"
+                    android:textColor="@color/vert"
+                    android:textSize="@dimen/text_size"></Button>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_inscriptions_lots"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/layout_rechercher_creer_partie"
+                android:layout_centerHorizontal="true">
+                <Button
+                    android:id="@+id/bouton_mes_inscriptions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:backgroundTint="@color/violet"
+                    android:text="@string/texte_mes_inscriptions"
+                    android:textColor="@color/vert"
+                    android:textSize="@dimen/text_size">
+                </Button>
+
+                <Button
+                    android:id="@+id/bouton_mes_lots"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="30px"
+                    android:layout_toRightOf="@id/bouton_mes_inscriptions"
+                    android:backgroundTint="@color/violet"
+                    android:text="@string/texte_mes_lots"
+                    android:textColor="@color/vert"
+                    android:textSize="@dimen/text_size"></Button>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/bouton_feedback"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/layout_inscriptions_lots"
+                android:layout_centerHorizontal="true"
+                android:backgroundTint="@color/violet"
+                android:text="@string/texte_feedback"
+                android:textColor="@color/vert"
+                android:textSize="@dimen/text_size"></Button>
+
+            <Button
+                android:id="@+id/bouton_parametres"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/bouton_feedback"
+                android:layout_centerHorizontal="true"
+                android:backgroundTint="@color/violet"
+                android:text="@string/texte_parametres"
+                android:textColor="@color/vert"
+                android:textSize="@dimen/text_size"></Button>
+
+            <Button
+                android:id="@+id/bouton_quitter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/bouton_parametres"
+                android:layout_centerHorizontal="true"
+                android:backgroundTint="@color/violet"
+                android:text="@string/texte_quitter"
+                android:textColor="@color/vert"
+                android:textSize="@dimen/text_size"></Button>
+        </RelativeLayout>
+    </RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

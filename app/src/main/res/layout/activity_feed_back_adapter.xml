@@ -1,0 +1,55 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginTop="30px">
+    <TextView
+        android:id="@+id/feed_back_adapter_texte_question"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="50px"
+        android:text="Un première question ?"
+        android:textSize="@dimen/text_size"></TextView>
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50px">
+        <RadioGroup
+            android:id="@+id/feed_back_adapter_rg_appreciation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/feed_back_adapter_rb_tres_bon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Très bon"
+                android:textSize="@dimen/text_size"></RadioButton>
+            <RadioButton
+                android:id="@+id/feed_back_adapter_rb_bon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bon"
+                android:textSize="@dimen/text_size"></RadioButton>
+            <RadioButton
+                android:id="@+id/feed_back_adapter_rb_moyen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Moyen"
+                android:textSize="@dimen/text_size"></RadioButton>
+            <RadioButton
+                android:id="@+id/feed_back_adapter_rb_tres_moyen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Très moyen"
+                android:textSize="@dimen/text_size"></RadioButton>
+            <RadioButton
+                android:id="@+id/feed_back_adapter_rb_mauvais"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mauvais"
+                android:textSize="@dimen/text_size"></RadioButton>
+        </RadioGroup>
+    </HorizontalScrollView>
+</LinearLayout>

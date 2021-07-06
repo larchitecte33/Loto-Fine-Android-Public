@@ -1,0 +1,104 @@
+<resources>
+    <string name="app_name">Loto-Finé</string>
+    <string name="title_activity_accueil">AccueilActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <string name="image_cartons_description">Ici se trouve un logo composé de deux cartons.</string>
+    <string name="image_logo_pricipal_description">Ici se trouve un logo composé d\'un carton.</string>
+
+    <string name="texte_minscrire">M\'inscrire</string>
+    <string name="texte_me_desinscrire">Me désinscrire</string>
+    <string name="texte_me_connecter">Me connecter</string>
+    <string name="texte_me_deconnecter">Me déconnecter</string>
+    <string name="texte_rechercher_partie_a_venir">Rechercher une&#10;partie à venir</string>
+    <string name="texte_mes_inscriptions">Mes inscriptions</string>
+    <string name="texte_mes_lots">Mes lots</string>
+    <string name="texte_parametres">Paramètres</string>
+    <string name="texte_quitter">Quitter</string>
+    <string name="texte_annuler">Annuler</string>
+    <string name="texte_valider">Valider</string>
+    <string name="texte_oui">Oui</string>
+    <string name="texte_non">Non</string>
+    <string name="texte_compte_cree">Compte créé</string>
+    <string name="texte_connecte">Connecté en tant que </string>
+    <string name="texte_non_connecte">Non connecté</string>
+    <string name="texte_demande_quine_envoyee">Demande de quine envoyée.</string>
+    <string name="texte_demande_quine_validee">Votre quine a été validée.</string>
+    <string name="texte_demande_quine_invalidee">Votre quine a été invalidée.</string>
+    <string name="texte_tirer_numero">Tirer numéro</string>
+    <string name="texte_valider_quine">Valider quine</string>
+    <string name="texte_invalider_quine">Invalider quine</string>
+    <string name="texte_carton_suivant">Carton suivant</string>
+    <string name="texte_retour">Retour</string>
+    <string name="texte_creer_partie">Créer une partie</string>
+    <string name="texte_feedback">Feedback</string>
+
+    <string name="title_activity_creation_compte">Création d\'un compte</string>
+
+    <string name="subtitle_connexion">Connexion</string>
+    <string name="subtitle_creation_partie">Création d\'une partie</string>
+    <string name="subtitle_modification_lot">Modification d\'un lot</string>
+    <string name="subtitle_choix_lieu_retrait">Choix du lieu de retrait</string>
+    <string name="subtitle_feedback">Feedback</string>
+
+    <string name="hint_saisir_nom">Saisissez votre nom</string>
+    <string name="hint_saisir_prenom">Saisissez votre prénom</string>
+    <string name="hint_saisir_email">Saisissez votre adresse e-mail</string>
+    <string name="hint_saisir_mdp">Saisissez un mot de passe</string>
+    <string name="hint_saisir_mdp2">Re-saisissez le mot de passe</string>
+    <string name="hint_saisir_adresse">Saisissez votre adresse</string>
+    <string name="hint_saisir_cp">Saisissez votre code postal</string>
+    <string name="hint_saisir_ville">Saisissez votre ville</string>
+    <string name="hint_saisir_num_tel">Saisissez votre numéro de téléphone</string>
+    <string name="hint_saisir_votre_mdp">Saisissez votre mot de passe</string>
+    <string name="hint_saisir_votre_recherche">Saisissez votre recherche</string>
+    <string name="hint_saisir_adresse_partie">Saisissez l\'adresse</string>
+    <string name="hint_choisir_date_heure">Choisissez la date et l\'heure</string>
+    <string name="hint_saisir_cp_partie">Saisissez le code postal</string>
+    <string name="hint_saisir_ville_partie">Saisissez la ville</string>
+    <string name="hint_saisir_prix_carton">Saisissez le prix du carton</string>
+
+    <string name="lbl_nom">Nom : </string>
+    <string name="lbl_prenom">Prénom : </string>
+    <string name="lbl_email">E-Mail : </string>
+    <string name="lbl_mdp">Mot de passe : </string>
+    <string name="lbl_adresse">Adresse : </string>
+    <string name="lbl_cp">Code postal : </string>
+    <string name="lbl_ville">Ville : </string>
+    <string name="lbl_num_tel">Numéro de tél : </string>
+    <string name="lbl_adresse_serveur">Adresse serveur : </string>
+    <string name="lbl_nb_secondes_avant_maj_infos">Nb secondes avant mise à jour infos tablette : </string>
+    <string name="lbl_date_heure">Date/heure : </string>
+    <string name="lbl_prix_carton">Prix du carton : </string>
+
+    <string name="title_activity_connexion">ConnexionActivity</string>
+
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="title_activity_connection">ConnectionActivity</string>
+
+    <string name="txt_veuillez_saisir_email">Veuillez saisir un e-mail.</string>
+    <string name="txt_veuillez_saisir_mdp">Veuillez saisir un mot de passe.</string>
+
+    <string name="erreur_doit_renseigner_adresse">L\'adresse doit être renseignée.</string>
+    <string name="erreur_doit_renseigner_dateheure">La date/heure doit être renseignée.</string>
+    <string name="erreur_doit_renseigner_cp">Le code postal doit être renseigné.</string>
+    <string name="erreur_doit_renseigner_ville">La ville doit être renseignée.</string>
+    <string name="erreur_doit_renseigner_prix_carton">Le prix du carton doit être renseigné.</string>
+    <string name="erreur_taille_max_adresse">La taille max de l\'adresse est de : </string>
+    <string name="erreur_taille_max_cp">La taille max du code postal est de : </string>
+    <string name="erreur_taille_max_ville">La taille max de la ville est de : </string>
+</resources>

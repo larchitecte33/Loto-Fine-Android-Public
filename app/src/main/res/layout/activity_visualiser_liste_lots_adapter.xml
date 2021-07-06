@@ -1,0 +1,75 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginTop="30px">
+    <TextView
+        android:id="@+id/visualiser_liste_lots_adapter_nom_lot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="left"
+        android:layout_marginLeft="50px"
+        android:text="Désignation du lot : "
+        android:textSize="@dimen/text_size"></TextView>
+    <TextView
+        android:id="@+id/visualiser_liste_lots_adapter_valeur_lot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="left"
+        android:layout_marginLeft="50px"
+        android:text="Valeur du lot : "
+        android:textSize="@dimen/text_size"></TextView>
+    <TextView
+        android:id="@+id/visualiser_liste_lots_adapter_carton_plein"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="50px"
+        android:text="Le lot est-il au carton plein ? : "
+        android:textSize="@dimen/text_size"></TextView>
+    <TextView
+        android:id="@+id/visualiser_liste_lots_adapter_position_lot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="left"
+        android:layout_marginLeft="50px"
+        android:text="Position du lot : "
+        android:textSize="@dimen/text_size"></TextView>
+    <LinearLayout
+        android:id="@+id/visualiser_liste_lots_adapter_layout_modifier_supprimer_lot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/visualiser_liste_lots_adapter_bouton_modifier_lot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginBottom="18dp"
+            android:backgroundTint="@color/violet"
+            android:textColor="@color/vert"
+            android:text="Modifier le lot"
+            android:layout_marginRight="10px"
+            android:visibility="gone"
+            android:textSize="@dimen/text_size"/>
+
+        <Button
+            android:id="@+id/visualiser_liste_lots_adapter_bouton_supprimer_lot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:backgroundTint="@color/violet"
+            android:textColor="@color/vert"
+            android:text="Supprimer le lot"
+            android:layout_marginLeft="10px"
+            android:visibility="gone"
+            android:textSize="@dimen/text_size"/>
+    </LinearLayout>
+</LinearLayout>

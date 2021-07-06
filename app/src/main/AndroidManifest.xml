@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.projects.loto_fine">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.LotFine"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".activites.FeedBackActivity"></activity>
+        <activity android:name=".activites.SuppressionCompteActivity" />
+        <activity android:name=".activites.ChoixLieuRetraitActivity" />
+        <activity android:name=".activites.MesLotsActivity" />
+        <activity android:name=".activites.ModificationLotActivity" />
+        <activity android:name=".activites.VisualiserListeLotsActivity" />
+        <activity android:name=".activites.AjoutLotActivity" />
+        <activity android:name=".activites.CreerPartieActivity" />
+        <activity android:name=".activites.MesInscriptionsActivity" />
+        <activity android:name=".activites.RecherchePartieActivity" />
+        <activity android:name=".activites.GestionPartieActivity" />
+        <activity android:name=".activites.ParametresActivity" />
+        <activity android:name=".activites.ConnectionActivity" />
+        <activity
+            android:name=".activites.ui.login.LoginActivity"
+            android:label="@string/title_activity_connexion" />
+        <activity
+            android:name=".activites.CreationCompteActivity"
+            android:label="@string/title_activity_creation_compte" />
+        <activity
+            android:name=".activites.AccueilActivity"
+            android:label="@string/title_activity_accueil"
+            android:theme="@style/Theme.LotFine.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".activites.MainActivity" />
+    </application>
+
+</manifest>
