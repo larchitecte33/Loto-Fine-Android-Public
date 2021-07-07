@@ -20,6 +20,7 @@ import com.projects.loto_fine.R;
 import com.projects.loto_fine.classes_metier.Carton;
 import com.projects.loto_fine.classes_metier.CaseCarton;
 import com.projects.loto_fine.classes_metier.ElementCliquable;
+import com.projects.loto_fine.classes_metier.OuiNonDialogFragment;
 import com.projects.loto_fine.classes_metier.Personne;
 import com.projects.loto_fine.classes_metier.RequeteHTTP;
 import com.projects.loto_fine.classes_metier.ValidationDialogFragment;
@@ -45,12 +46,14 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class MainActivity extends AppCompatActivity implements ValidationDialogFragment.ValidationDialogListener {
+public class MainActivity extends AppCompatActivity implements ValidationDialogFragment.ValidationDialogListener,
+        OuiNonDialogFragment.OuiNonDialogListener {
 
     private Carton monPremierCarton, monDeuxiemeCarton, carton;
     private boolean isCartonsArrives = false;
@@ -701,7 +704,9 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
                                     }
                                 }
                                 else if(id == "boutonQuitter") {
-                                    finish();
+                                    HashMap<String, String> args = new HashMap<>();
+                                    OuiNonDialogFragment ondf = new OuiNonDialogFragment("Etes-vous sûr de vouloir quitter ?", "quitter", "nePasQuitter", args);
+                                    ondf.show(getSupportFragmentManager(), "");
                                 }
                             }
 
@@ -762,6 +767,14 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
         if(revenirAAccueil) {
             Intent intent = new Intent(getApplicationContext(), AccueilActivity.class);
             startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onFinishEditDialog(String nomActionOui, String nomActionNon, boolean isChoixOui, HashMap<String, String> args) {
+        // Si choix = Oui
+        if (isChoixOui) {
+            finish();
         }
     }
 }

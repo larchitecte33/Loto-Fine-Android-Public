@@ -21,6 +21,7 @@ import com.projects.loto_fine.R;
 import com.projects.loto_fine.classes_metier.Carton;
 import com.projects.loto_fine.classes_metier.CaseCarton;
 import com.projects.loto_fine.classes_metier.ElementCliquable;
+import com.projects.loto_fine.classes_metier.OuiNonDialogFragment;
 import com.projects.loto_fine.classes_metier.Personne;
 import com.projects.loto_fine.classes_metier.RequeteHTTP;
 import com.projects.loto_fine.classes_metier.ValidationDialogFragment;
@@ -32,8 +33,10 @@ import org.json.JSONObject;
 
 import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public class GestionPartieActivity extends AppCompatActivity implements ValidationDialogFragment.ValidationDialogListener {
+public class GestionPartieActivity extends AppCompatActivity implements ValidationDialogFragment.ValidationDialogListener,
+        OuiNonDialogFragment.OuiNonDialogListener {
 
     GrilleNumerosTiresEtCartons grilleNumerosTiresEtCarton;
     private int numeroTire, numCartonEnCours, idPartie = -1;
@@ -458,7 +461,9 @@ public class GestionPartieActivity extends AppCompatActivity implements Validati
                                 }
                                 else if(id == "boutonQuitter") {
                                     elementTrouve = true;
-                                    finish();
+                                    HashMap<String, String> args = new HashMap<>();
+                                    OuiNonDialogFragment ondf = new OuiNonDialogFragment("Etes-vous sûr de vouloir quitter ?", "quitter", "nePasQuitter", args);
+                                    ondf.show(getSupportFragmentManager(), "");
                                 }
                             }
 
@@ -477,6 +482,14 @@ public class GestionPartieActivity extends AppCompatActivity implements Validati
         if(revenirAAccueil) {
             Intent intent = new Intent(getApplicationContext(), AccueilActivity.class);
             startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onFinishEditDialog(String nomActionOui, String nomActionNon, boolean isChoixOui, HashMap<String, String> args) {
+        // Si choix = Oui
+        if (isChoixOui) {
+            finish();
         }
     }
 }

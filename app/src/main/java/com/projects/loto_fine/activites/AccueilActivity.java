@@ -196,6 +196,7 @@ public class AccueilActivity extends AppCompatActivity implements ValidationDial
             public void onClick(View v) {
                 //finish();
                 finishAffinity();
+                System.exit(0);
             }
         });
 
