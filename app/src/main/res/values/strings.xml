@@ -17,9 +17,12 @@
     <string name="texte_me_desinscrire">Me désinscrire</string>
     <string name="texte_me_connecter">Me connecter</string>
     <string name="texte_me_deconnecter">Me déconnecter</string>
+    <string name="texte_modifier_compte">Modifier\nmon compte</string>
     <string name="texte_rechercher_partie_a_venir">Rechercher une&#10;partie à venir</string>
     <string name="texte_mes_inscriptions">Mes inscriptions</string>
     <string name="texte_mes_lots">Mes lots</string>
+    <string name="texte_statistiques">Statistiques</string>
+    <string name="texte_classements">Classements</string>
     <string name="texte_parametres">Paramètres</string>
     <string name="texte_quitter">Quitter</string>
     <string name="texte_annuler">Annuler</string>
@@ -27,6 +30,7 @@
     <string name="texte_oui">Oui</string>
     <string name="texte_non">Non</string>
     <string name="texte_compte_cree">Compte créé</string>
+    <string name="texte_compte_modifie">Compte modifié</string>
     <string name="texte_connecte">Connecté en tant que </string>
     <string name="texte_non_connecte">Non connecté</string>
     <string name="texte_demande_quine_envoyee">Demande de quine envoyée.</string>
@@ -39,6 +43,9 @@
     <string name="texte_retour">Retour</string>
     <string name="texte_creer_partie">Créer une partie</string>
     <string name="texte_feedback">Feedback</string>
+    <string name="texte_parties_a_venir">Parties à venir</string>
+    <string name="texte_parties_a_venir_ou_animees">Parties à venir ou animées</string>
+    <string name="texte_toutes_les_parties">Toutes les parties</string>
 
     <string name="title_activity_creation_compte">Création d\'un compte</string>
 
@@ -47,6 +54,9 @@
     <string name="subtitle_modification_lot">Modification d\'un lot</string>
     <string name="subtitle_choix_lieu_retrait">Choix du lieu de retrait</string>
     <string name="subtitle_feedback">Feedback</string>
+    <string name="subtitle_statistiques">Statistiques</string>
+    <string name="subtitle_classements">Classements</string>
+    <string name="subtitle_methode_reglement_cartons">Méthode de règlement des cartons</string>
 
     <string name="hint_saisir_nom">Saisissez votre nom</string>
     <string name="hint_saisir_prenom">Saisissez votre prénom</string>
@@ -64,6 +74,9 @@
     <string name="hint_saisir_cp_partie">Saisissez le code postal</string>
     <string name="hint_saisir_ville_partie">Saisissez la ville</string>
     <string name="hint_saisir_prix_carton">Saisissez le prix du carton</string>
+    <string name="hint_choisir_date_debut">Choisissez la date de début</string>
+    <string name="hint_choisir_date_fin">Choisissez la date de fin</string>
+    <string name="hint_description_methode_reglement">Veuillez décrire ici comment les participants devront vous régler.</string>
 
     <string name="lbl_nom">Nom : </string>
     <string name="lbl_prenom">Prénom : </string>
@@ -77,6 +90,10 @@
     <string name="lbl_nb_secondes_avant_maj_infos">Nb secondes avant mise à jour infos tablette : </string>
     <string name="lbl_date_heure">Date/heure : </string>
     <string name="lbl_prix_carton">Prix du carton : </string>
+    <string name="lbl_date_debut">Date de début : </string>
+    <string name="lbl_date_fin">Date de fin : </string>
+    <string name="lbl_critere">Critère : </string>
+    <string name="lbl_methode_reglement">Méthode de règlement :</string>
 
     <string name="title_activity_connexion">ConnexionActivity</string>
 
@@ -101,4 +118,10 @@
     <string name="erreur_taille_max_adresse">La taille max de l\'adresse est de : </string>
     <string name="erreur_taille_max_cp">La taille max du code postal est de : </string>
     <string name="erreur_taille_max_ville">La taille max de la ville est de : </string>
+
+    <string-array name="select_critere_classement">
+        <item>Nombre de lots gagnés</item>
+        <item>Nombre de participations</item>
+        <item>Nombre moyen de carton</item>
+    </string-array>
 </resources>

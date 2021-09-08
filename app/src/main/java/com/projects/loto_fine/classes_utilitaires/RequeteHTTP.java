@@ -1,4 +1,4 @@
-package com.projects.loto_fine.classes_metier;
+package com.projects.loto_fine.classes_utilitaires;
 
 import android.content.Context;
 import android.util.Log;
@@ -11,17 +11,16 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpResponse;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import com.projects.loto_fine.MessageBox;
 import com.projects.loto_fine.activites.AccueilActivity;
 import com.projects.loto_fine.activites.AjoutLotActivity;
 import com.projects.loto_fine.activites.ChoixLieuRetraitActivity;
+import com.projects.loto_fine.activites.ClassementsActivity;
 import com.projects.loto_fine.activites.ConnectionActivity;
 import com.projects.loto_fine.activites.CreationCompteActivity;
 import com.projects.loto_fine.activites.CreerPartieActivity;
+import com.projects.loto_fine.activites.DescriptionMethodeReglementActivity;
 import com.projects.loto_fine.activites.FeedBackActivity;
 import com.projects.loto_fine.activites.GestionPartieActivity;
 import com.projects.loto_fine.activites.MainActivity;
@@ -29,7 +28,9 @@ import com.projects.loto_fine.activites.MesInscriptionsActivity;
 import com.projects.loto_fine.activites.MesLotsActivity;
 import com.projects.loto_fine.activites.ModificationLotActivity;
 import com.projects.loto_fine.activites.RecherchePartieActivity;
+import com.projects.loto_fine.activites.StatistiquesActivity;
 import com.projects.loto_fine.activites.SuppressionCompteActivity;
+import com.projects.loto_fine.activites.VisualiserListeInscritsActivity;
 import com.projects.loto_fine.activites.VisualiserListeLotsActivity;
 
 import org.json.JSONArray;
@@ -50,13 +51,13 @@ public class RequeteHTTP {
 
     public String traiterRequeteHTTPJSON(AppCompatActivity classeAppelante, String action, String method, String jsonToPostStr,
                                          FragmentManager fragmentManager) {
-        RequestQueue queue = Volley.newRequestQueue(context);
+        RequestQueue queue = RequestQueueSingleton.getInstance(this.context).getRequestQueue(); // Volley.newRequestQueue(context);
         ReponseHTTP reponse = new ReponseHTTP();
 
         url = AccueilActivity.encoderURL(url, fragmentManager);
+        Log.d("url : ", url);
 
         if(method == "GET") {
-            Log.d("url : ", url);
             // On prépare la requête
             JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                     new Response.Listener<JSONObject>() {
@@ -65,11 +66,7 @@ public class RequeteHTTP {
                             // display response
                             Log.d("Response", response.toString());
 
-                            if (action == "CreationCompte") {
-                                final CreationCompteActivity creationCompteActivity = (CreationCompteActivity) classeAppelante;
-                                creationCompteActivity.TraiterReponse(response.toString(), false);
-                            }
-                            else if(action == "Connexion") {
+                            if(action == "Connexion") {
                                 final ConnectionActivity connectionActivity = (ConnectionActivity) classeAppelante;
                                 connectionActivity.TraiterReponse("connexion", response.toString(), false);
                             }
@@ -84,6 +81,14 @@ public class RequeteHTTP {
                             else if((classeAppelante.getClass() == SuppressionCompteActivity.class) && (action == "ObtentionInfosPersonne")) {
                                 final SuppressionCompteActivity suppressionCompteActivity = (SuppressionCompteActivity) classeAppelante;
                                 suppressionCompteActivity.TraiterReponse("obtentionInfosPersonne", response.toString(), false);
+                            }
+                            else if((classeAppelante.getClass() == StatistiquesActivity.class) && (action == "ObtentionInfosPersonne")) {
+                                final StatistiquesActivity statistiquesActivity = (StatistiquesActivity) classeAppelante;
+                                statistiquesActivity.TraiterReponse("obtentionInfosPersonne", response.toString(), false);
+                            }
+                            else if((classeAppelante.getClass() == CreationCompteActivity.class) && (action == "ObtentionInfosPersonne")) {
+                                final CreationCompteActivity creationCompteActivity = (CreationCompteActivity) classeAppelante;
+                                creationCompteActivity.TraiterReponse("obtentionInfosPersonne", response.toString(), false);
                             }
                             else if (action == "RecuperationQuine") {
                                 final MainActivity mainActivity = (MainActivity) classeAppelante;
@@ -103,6 +108,11 @@ public class RequeteHTTP {
                                 final GestionPartieActivity gestionPartieActivity = (GestionPartieActivity) classeAppelante;
                                 gestionPartieActivity.TraiterReponse("majInfosTablette", response.toString(), false);
                             }
+                            // Récupération de la méthode de réglement d'une partie
+                            else if(action == "RecuperationMethodeReglement") {
+                                final DescriptionMethodeReglementActivity descriptionMethodeReglementActivity = (DescriptionMethodeReglementActivity) classeAppelante;
+                                descriptionMethodeReglementActivity.TraiterReponse("recuperationMethodeReglement", response.toString(), false);
+                            }
                         }
                     },
                     new Response.ErrorListener() {
@@ -110,11 +120,7 @@ public class RequeteHTTP {
                         public void onErrorResponse(VolleyError error) {
                             Log.d("Error.Response", error.toString());
 
-                            if (action == "CreationCompte") {
-                                final CreationCompteActivity creationCompteActivity = (CreationCompteActivity) classeAppelante;
-                                creationCompteActivity.TraiterReponse(error.toString(), true);
-                            }
-                            else if(action == "Connexion") {
+                            if(action == "Connexion") {
                                 final ConnectionActivity connectionActivity = (ConnectionActivity) classeAppelante;
                                 connectionActivity.TraiterReponse("connexion", error.toString(), true);
                             }
@@ -129,6 +135,14 @@ public class RequeteHTTP {
                             else if((classeAppelante.getClass() == SuppressionCompteActivity.class) && (action == "ObtentionInfosPersonne")) {
                                 final SuppressionCompteActivity suppressionCompteActivity = (SuppressionCompteActivity) classeAppelante;
                                 suppressionCompteActivity.TraiterReponse("obtentionInfosPersonne", error.toString(), true);
+                            }
+                            else if((classeAppelante.getClass() == StatistiquesActivity.class) && (action == "ObtentionInfosPersonne")) {
+                                final StatistiquesActivity statistiquesActivity = (StatistiquesActivity) classeAppelante;
+                                statistiquesActivity.TraiterReponse("obtentionInfosPersonne", error.toString(), true);
+                            }
+                            else if((classeAppelante.getClass() == CreationCompteActivity.class) && (action == "ObtentionInfosPersonne")) {
+                                final CreationCompteActivity creationCompteActivity = (CreationCompteActivity) classeAppelante;
+                                creationCompteActivity.TraiterReponse("obtentionInfosPersonne", error.toString(), true);
                             }
                             else if(action == "RecuperationQuine") {
                                 final MainActivity mainActivity = (MainActivity) classeAppelante;
@@ -147,6 +161,11 @@ public class RequeteHTTP {
                             else if(action == "MAJInfosTabletteAnimateur") {
                                 final GestionPartieActivity gestionPartieActivity = (GestionPartieActivity) classeAppelante;
                                 gestionPartieActivity.TraiterReponse("majInfosTablette", error.toString(), true);
+                            }
+                            // Récupération de la méthode de réglement d'une partie
+                            else if(action == "RecuperationMethodeReglement") {
+                                final DescriptionMethodeReglementActivity descriptionMethodeReglementActivity = (DescriptionMethodeReglementActivity) classeAppelante;
+                                descriptionMethodeReglementActivity.TraiterReponse("recuperationMethodeReglement", error.toString(), true);
                             }
                         }
                     }
@@ -198,16 +217,23 @@ public class RequeteHTTP {
                         new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
+                                // Création d'un compte
                                 if (action == "CreationCompte") {
                                     final CreationCompteActivity creationCompteActivity = (CreationCompteActivity) classeAppelante;
-                                    creationCompteActivity.TraiterReponse(response.toString(), false);
-                                } else if (action == "Main") {
+                                    creationCompteActivity.TraiterReponse("creationCompte", response.toString(), false);
+                                }
+                                // Récupération des cartons
+                                else if (action == "Main") {
                                     final MainActivity mainActivity = (MainActivity) classeAppelante;
                                     mainActivity.TraiterReponse("recuperationCartons", response.toString(), false);
-                                } else if (action == "EnvoiQuine") {
+                                }
+                                // Envoi d'une demande de quine par un participant
+                                else if (action == "EnvoiQuine") {
                                     final MainActivity mainActivity = (MainActivity) classeAppelante;
                                     mainActivity.TraiterReponse("envoiQuine", response.toString(), false);
-                                } else if (action == "ValiderQuine") {
+                                }
+                                // Validation d'une quine par l'animateur
+                                else if (action == "ValiderQuine") {
                                     final GestionPartieActivity gestionPartieActivity = (GestionPartieActivity) classeAppelante;
                                     gestionPartieActivity.TraiterReponse("validationQuine", response.toString(), false);
                                 }
@@ -243,14 +269,17 @@ public class RequeteHTTP {
                             public void onErrorResponse(VolleyError error) {
                                 if (action == "CreationCompte") {
                                     final CreationCompteActivity creationCompteActivity = (CreationCompteActivity) classeAppelante;
-                                    creationCompteActivity.TraiterReponse(error.toString(), true);
-                                } else if (action == "Main") {
+                                    creationCompteActivity.TraiterReponse("creationCompte", error.toString(), true);
+                                }
+                                else if (action == "Main") {
                                     final MainActivity mainActivity = (MainActivity) classeAppelante;
                                     mainActivity.TraiterReponse("recuperationCartons", error.toString(), true);
-                                } else if (action == "EnvoiQuine") {
+                                }
+                                else if (action == "EnvoiQuine") {
                                     final MainActivity mainActivity = (MainActivity) classeAppelante;
                                     mainActivity.TraiterReponse("envoiQuine", error.toString(), true);
-                                } else if (action == "ValiderQuine") {
+                                }
+                                else if (action == "ValiderQuine") {
                                     final GestionPartieActivity gestionPartieActivity = (GestionPartieActivity) classeAppelante;
                                     gestionPartieActivity.TraiterReponse("validationQuine", error.toString(), true);
                                 }
@@ -370,6 +399,16 @@ public class RequeteHTTP {
                                 final ModificationLotActivity modificationLotActivity = (ModificationLotActivity) classeAppelante;
                                 modificationLotActivity.TraiterReponse("modificationLot", response.toString(), false);
                             }
+                            // Modification d'un compte
+                            else if(action == "ModificationCompte") {
+                                final CreationCompteActivity creationCompteActivity = (CreationCompteActivity) classeAppelante;
+                                creationCompteActivity.TraiterReponse("modificationCompte", response.toString(), false);
+                            }
+                            // Modification du statut de validation d'inscriptions de participants à une partie
+                            else if(action == "ChangerStatutValidationInscriptions") {
+                                final VisualiserListeInscritsActivity visualiserListeInscritsActivity = (VisualiserListeInscritsActivity) classeAppelante;
+                                visualiserListeInscritsActivity.TraiterReponse("changerStatutValidationInscriptions", response.toString(), false);
+                            }
                         }
                     },
                     new Response.ErrorListener() {
@@ -379,6 +418,16 @@ public class RequeteHTTP {
                             if(action == "ModificationLot") {
                                 final ModificationLotActivity modificationLotActivity = (ModificationLotActivity) classeAppelante;
                                 modificationLotActivity.TraiterReponse("modificationLot", error.toString(), true);
+                            }
+                            // Modification d'un compte
+                            else if(action == "ModificationCompte") {
+                                final CreationCompteActivity creationCompteActivity = (CreationCompteActivity) classeAppelante;
+                                creationCompteActivity.TraiterReponse("modificationCompte", error.toString(), true);
+                            }
+                            // Modification du statut de validation d'inscriptions de participants à une partie
+                            else if(action == "ChangerStatutValidationInscriptions") {
+                                final VisualiserListeInscritsActivity visualiserListeInscritsActivity = (VisualiserListeInscritsActivity) classeAppelante;
+                                visualiserListeInscritsActivity.TraiterReponse("changerStatutValidationInscriptions", error.toString(), true);
                             }
                         }
                     }
@@ -392,8 +441,7 @@ public class RequeteHTTP {
 
     public String traiterRequeteHTTPJSONArray(AppCompatActivity classeAppelante, String action, String method,
                                               FragmentManager fragmentManager) {
-        //final String url = "http://192.168.1.17:8080/cartons/2";
-        RequestQueue queue = Volley.newRequestQueue(context);
+        RequestQueue queue = RequestQueueSingleton.getInstance(this.context).getRequestQueue(); // Volley.newRequestQueue(context);
         ReponseHTTP reponse = new ReponseHTTP();
 
         url = AccueilActivity.encoderURL(url, fragmentManager);
@@ -407,10 +455,7 @@ public class RequeteHTTP {
                             // display response
                             Log.d("Response", response.toString());
 
-                            if (action == "CreationCompte") {
-                                final CreationCompteActivity creationCompteActivity = (CreationCompteActivity) classeAppelante;
-                                creationCompteActivity.TraiterReponse(response.toString(), false);
-                            } else if (action == "Main") {
+                            if (action == "Main") {
                                 final MainActivity mainActivity = (MainActivity) classeAppelante;
                                 mainActivity.TraiterReponse("recuperationCartons", response.toString(), false);
                             }
@@ -451,6 +496,18 @@ public class RequeteHTTP {
                                 final FeedBackActivity feedBackActivity = (FeedBackActivity) classeAppelante;
                                 feedBackActivity.TraiterReponse("recuperationQuestionsFeedback", response.toString(), false);
                             }
+                            else if(action == "RecuperationStatistiques") {
+                                final StatistiquesActivity statistiquesActivity = (StatistiquesActivity) classeAppelante;
+                                statistiquesActivity.TraiterReponse("recuperationStatistiques", response.toString(), false);
+                            }
+                            else if(action == "RecuperationClassements") {
+                                final ClassementsActivity classementsActivity = (ClassementsActivity) classeAppelante;
+                                classementsActivity.TraiterReponse("recuperationClassements", response.toString(), false);
+                            }
+                            else if(action == "RechercheListeInscrits") {
+                                final VisualiserListeInscritsActivity visualiserListeInscritsActivity = (VisualiserListeInscritsActivity) classeAppelante;
+                                visualiserListeInscritsActivity.TraiterReponse("rechercheListeInscrits", response.toString(), false);
+                            }
                         }
                     },
                     new Response.ErrorListener() {
@@ -458,11 +515,7 @@ public class RequeteHTTP {
                         public void onErrorResponse(VolleyError error) {
                             Log.d("Error.Response", error.toString());
 
-                            if (action == "CreationCompte") {
-                                final CreationCompteActivity creationCompteActivity = (CreationCompteActivity) classeAppelante;
-                                creationCompteActivity.TraiterReponse(error.toString(), true);
-                            }
-                            else if (action == "Main") {
+                            if (action == "Main") {
                                 final MainActivity mainActivity = (MainActivity) classeAppelante;
                                 mainActivity.TraiterReponse("recuperationCartons", error.toString(), true);
                             }
@@ -503,6 +556,18 @@ public class RequeteHTTP {
                                 final FeedBackActivity feedBackActivity = (FeedBackActivity) classeAppelante;
                                 feedBackActivity.TraiterReponse("recuperationQuestionsFeedback", error.toString(), true);
                             }
+                            else if(action == "RecuperationStatistiques") {
+                                final StatistiquesActivity statistiquesActivity = (StatistiquesActivity) classeAppelante;
+                                statistiquesActivity.TraiterReponse("recuperationStatistiques", error.toString(), true);
+                            }
+                            else if(action == "RecuperationClassements") {
+                                final ClassementsActivity classementsActivity = (ClassementsActivity) classeAppelante;
+                                classementsActivity.TraiterReponse("recuperationClassements", error.toString(), true);
+                            }
+                            else if(action == "RechercheListeInscrits") {
+                                final VisualiserListeInscritsActivity visualiserListeInscritsActivity = (VisualiserListeInscritsActivity) classeAppelante;
+                                visualiserListeInscritsActivity.TraiterReponse("rechercheListeInscrits", error.toString(), true);
+                            }
 
                             //MessageBox msgBox = new MessageBox();
                             //msgBox.show("Erreur", error.toString(), classeAppelante.getApplicationContext());
@@ -514,31 +579,6 @@ public class RequeteHTTP {
 
             // add it to the RequestQueue
             queue.add(getRequest);
-        }
-        else if(method == "POST") {
-            JsonArrayRequest postRequest = new JsonArrayRequest(Request.Method.POST, url, null,
-                    new Response.Listener<JSONArray>() {
-                        @Override
-                        public void onResponse(JSONArray response) {
-                            if (action == "CreationCompte") {
-                                final CreationCompteActivity creationCompteActivity = (CreationCompteActivity) classeAppelante;
-                                creationCompteActivity.TraiterReponse(response.toString(), false);
-                            }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            if (action == "CreationCompte") {
-                                final CreationCompteActivity creationCompteActivity = (CreationCompteActivity) classeAppelante;
-                                creationCompteActivity.TraiterReponse(error.toString(), true);
-                            }
-                        }
-                    }
-            );
-
-            // add it to the RequestQueue
-            queue.add(postRequest);
         }
 
         return "";

@@ -7,15 +7,14 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
 
 import androidx.core.content.res.ResourcesCompat;
 
-import com.projects.loto_fine.Constants;
+import com.projects.loto_fine.constantes.Constants;
 import com.projects.loto_fine.R;
 import com.projects.loto_fine.classes_metier.Carton;
-import com.projects.loto_fine.classes_metier.ElementCliquable;
+import com.projects.loto_fine.classes_utilitaires.ElementCliquable;
 import com.projects.loto_fine.classes_metier.Personne;
 
 import java.util.ArrayList;

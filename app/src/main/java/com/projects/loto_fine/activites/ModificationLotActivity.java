@@ -13,10 +13,10 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 
-import com.projects.loto_fine.Constants;
+import com.projects.loto_fine.constantes.Constants;
 import com.projects.loto_fine.R;
-import com.projects.loto_fine.classes_metier.RequeteHTTP;
-import com.projects.loto_fine.classes_metier.ValidationDialogFragment;
+import com.projects.loto_fine.classes_utilitaires.RequeteHTTP;
+import com.projects.loto_fine.classes_utilitaires.ValidationDialogFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -147,9 +147,10 @@ public class ModificationLotActivity extends AppCompatActivity implements Valida
                         String email = sharedPref.getString("emailUtilisateur", "");
                         String mdp = sharedPref.getString("mdpUtilisateur", "");
 
-                        String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIAnimateur + "/animateur/modification-lot?email=" + email +
-                                "&mdp=" + mdp +
-                                "&idPartie=" + idPartie + "&idLot=" + idLot + "&nomLot=" + nomLot +
+                        String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIAnimateur + "/animateur/modification-lot?email=" +
+                                AccueilActivity.encoderECommercial(email) +
+                                "&mdp=" + AccueilActivity.encoderECommercial(mdp) +
+                                "&idPartie=" + idPartie + "&idLot=" + idLot + "&nomLot=" + AccueilActivity.encoderECommercial(nomLot) +
                                 "&valeurLot=" + valeurLot + "&isALaLigne=" + isALaLigne +
                                 "&position=" + numPickPositionLot.getValue();
                         System.out.println("Modification d'un lot(nomLot = " + nomLot + ", valeurLot = " + valeurLot + ") : " + adresse);

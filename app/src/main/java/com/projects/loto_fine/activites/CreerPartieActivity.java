@@ -15,18 +15,14 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
 
-import com.projects.loto_fine.Constants;
+import com.projects.loto_fine.constantes.Constants;
 import com.projects.loto_fine.R;
-import com.projects.loto_fine.classes_metier.RequeteHTTP;
-import com.projects.loto_fine.classes_metier.ValidationDialogFragment;
+import com.projects.loto_fine.classes_utilitaires.RequeteHTTP;
+import com.projects.loto_fine.classes_utilitaires.ValidationDialogFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -43,7 +39,7 @@ public class CreerPartieActivity extends AppCompatActivity implements DatePicker
     private SharedPreferences sharedPref;
     private boolean timeIsSet = false;
 
-    public String padLeftZeros(String inputString, int length) {
+    public static String padLeftZeros(String inputString, int length) {
         if (inputString.length() >= length) {
             return inputString;
         }
@@ -113,6 +109,7 @@ public class CreerPartieActivity extends AppCompatActivity implements DatePicker
         EditText editSaisirCP = findViewById(R.id.creer_partie_edit_saisir_code_postal);
         EditText editSaisirVille = findViewById(R.id.creer_partie_edit_saisir_ville);
         EditText editSaisirPrixCarton = findViewById(R.id.creer_partie_edit_saisir_prix_carton);
+        EditText editSaisirMethodeReglement = findViewById(R.id.creer_partie_edit_saisir_methode_reglement);
         Button boutonAnnuler = findViewById(R.id.bouton_annuler_creation_partie);
         Button boutonValider = findViewById(R.id.bouton_valider_creation_partie);
 
@@ -208,10 +205,13 @@ public class CreerPartieActivity extends AppCompatActivity implements DatePicker
                     String email = sharedPref.getString("emailUtilisateur", "");
                     String mdp = sharedPref.getString("mdpUtilisateur", "");
 
-                    String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIAnimateur + "/animateur/creation-partie?email=" + email + "&mdp=" + mdp +
-                            "&adresse=" + editSaisirAdresse.getText().toString() + "&datePartie=" + dateLong + // + dateStr + ":00" +
-                            "&cp=" + editSaisirCP.getText().toString() + "&ville=" + editSaisirVille.getText().toString() +
-                            "&prixCarton=" + editSaisirPrixCarton.getText().toString();
+                    String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIAnimateur + "/animateur/creation-partie?email=" +
+                            AccueilActivity.encoderECommercial(email) + "&mdp=" + AccueilActivity.encoderECommercial(mdp) +
+                            "&adresse=" + AccueilActivity.encoderECommercial(editSaisirAdresse.getText().toString()) + "&datePartie=" + dateLong + // + dateStr + ":00" +
+                            "&cp=" + AccueilActivity.encoderECommercial(editSaisirCP.getText().toString()) +
+                            "&ville=" + AccueilActivity.encoderECommercial(editSaisirVille.getText().toString()) +
+                            "&prixCarton=" + editSaisirPrixCarton.getText().toString() +
+                            "&methodeReglement=" + AccueilActivity.encoderECommercial(editSaisirMethodeReglement.getText().toString());
                     System.out.println("Création d'une partie : " + adresse);
 
                     RequeteHTTP requeteHTTP = new RequeteHTTP(getApplicationContext(),

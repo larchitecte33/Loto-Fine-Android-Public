@@ -1,4 +1,4 @@
-package com.projects.loto_fine;
+package com.projects.loto_fine.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,13 +14,11 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.projects.loto_fine.R;
 import com.projects.loto_fine.activites.ModificationLotActivity;
 import com.projects.loto_fine.activites.VisualiserListeLotsActivity;
 import com.projects.loto_fine.classes_metier.Lot;
-import com.projects.loto_fine.classes_metier.OuiNonDialogFragment;
-import com.projects.loto_fine.classes_metier.Partie;
-import com.projects.loto_fine.classes_metier.RequeteHTTP;
-import com.projects.loto_fine.classes_metier.ValidationDialogFragment;
+import com.projects.loto_fine.classes_utilitaires.OuiNonDialogFragment;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -62,6 +60,8 @@ public class LotAdapter extends ArrayAdapter<Lot> {
         TextView tvValeurLot = (TextView)convertView.findViewById(R.id.visualiser_liste_lots_adapter_valeur_lot);
         TextView tvCartonPlein = (TextView)convertView.findViewById(R.id.visualiser_liste_lots_adapter_carton_plein);
         TextView tvPositionLot = (TextView)convertView.findViewById(R.id.visualiser_liste_lots_adapter_position_lot);
+        TextView tvRemportePar = (TextView)convertView.findViewById(R.id.visualiser_liste_lots_adapter_remporte_par);
+        TextView tvAdresseRetrait = (TextView)convertView.findViewById(R.id.visualiser_liste_lots_adapter_adresse_retrait);
         Button btnModifierLot = (Button)convertView.findViewById(R.id.visualiser_liste_lots_adapter_bouton_modifier_lot);
         Button btnSupprimerLot = (Button)convertView.findViewById(R.id.visualiser_liste_lots_adapter_bouton_supprimer_lot);
         LinearLayout layoutModifierSupprimerLot = (LinearLayout)convertView.findViewById(R.id.visualiser_liste_lots_adapter_layout_modifier_supprimer_lot);
@@ -94,15 +94,58 @@ public class LotAdapter extends ArrayAdapter<Lot> {
 
         String email = sharedPref.getString("emailUtilisateur", "");
 
-        if(email.equals(emailAnimateurPartie)) {
+        // Si l'utilisateur connecté est l'animateur de la partie et si le lot n'a pas été gagné, alors
+        // on affiche les boutons "Modifier le lot" et "Supprimer le lot".
+        if(email.equals(emailAnimateurPartie) && (lots.get(position).getGagnant() == null)) {
             layoutModifierSupprimerLot.setVisibility(View.VISIBLE);
             btnModifierLot.setVisibility(View.VISIBLE);
             btnSupprimerLot.setVisibility(View.VISIBLE);
+            tvRemportePar.setVisibility(View.GONE);
+            tvAdresseRetrait.setVisibility(View.GONE);
         }
+        // Si l'utilisateur connecté n'est pas l'animateur de la partie ou si le lot a été gagné, on masque ces boutons.
         else {
             layoutModifierSupprimerLot.setVisibility(View.GONE);
             btnModifierLot.setVisibility(View.GONE);
             btnSupprimerLot.setVisibility(View.GONE);
+
+            // Si l'utilisateur connecté est l'animateur de la partie, on va afficher les coordonées de la personne ayant remporté le lot ainsi que
+            // l'adresse de retrait choisie par celle-ci.
+            if(email.equals(emailAnimateurPartie)) {
+                tvRemportePar.setVisibility(View.VISIBLE);
+                tvRemportePar.setText("Remporté par : " + lots.get(position).getGagnant().getNom() + " " + lots.get(position).getGagnant().getPrenom() +
+                        " (email = " + lots.get(position).getGagnant().getEmail() + ")");
+
+                if ((lots.get(position).getAdresseRetrait() != null) || (lots.get(position).getCpRetrait() != null)
+                        || (lots.get(position).getVilleRetrait() != null)) {
+                    tvAdresseRetrait.setVisibility(View.VISIBLE);
+
+                    String adresseRetrait = "Adresse retrait :";
+
+                    if (lots.get(position).getAdresseRetrait() != null) {
+                        adresseRetrait += " ";
+                        adresseRetrait += lots.get(position).getAdresseRetrait();
+                    }
+
+                    if (lots.get(position).getCpRetrait() != null) {
+                        adresseRetrait += " ";
+                        adresseRetrait += lots.get(position).getCpRetrait();
+                    }
+
+                    if (lots.get(position).getVilleRetrait() != null) {
+                        adresseRetrait += " ";
+                        adresseRetrait += lots.get(position).getVilleRetrait();
+                    }
+
+                    tvAdresseRetrait.setText(adresseRetrait);
+                } else {
+                    tvAdresseRetrait.setVisibility(View.GONE);
+                }
+            }
+            else {
+                tvRemportePar.setVisibility(View.GONE);
+                tvAdresseRetrait.setVisibility(View.GONE);
+            }
         }
 
         // ******************************** Gestion des clics sur boutons *********************** //

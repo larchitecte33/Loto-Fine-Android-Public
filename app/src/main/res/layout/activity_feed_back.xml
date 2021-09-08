@@ -52,7 +52,7 @@
                 android:layout_marginLeft="50px"
                 android:layout_marginRight="50px"
                 android:layout_marginTop="10px"
-                android:backgroundTint="@color/violet"
+                android:background="@color/violet"
                 android:textColor="@color/vert"/>
             <LinearLayout
                 android:id="@+id/feedback_layout_attente"

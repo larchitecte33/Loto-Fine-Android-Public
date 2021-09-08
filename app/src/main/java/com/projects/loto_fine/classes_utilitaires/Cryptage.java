@@ -1,4 +1,4 @@
-package com.projects.loto_fine.classes_metier;
+package com.projects.loto_fine.classes_utilitaires;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;

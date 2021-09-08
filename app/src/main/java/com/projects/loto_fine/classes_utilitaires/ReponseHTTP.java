@@ -1,4 +1,4 @@
-package com.projects.loto_fine.classes_metier;
+package com.projects.loto_fine.classes_utilitaires;
 
 public class ReponseHTTP {
     private boolean isError;

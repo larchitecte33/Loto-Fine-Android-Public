@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.projects.loto_fine.R;
-import com.projects.loto_fine.classes_metier.ValidationDialogFragment;
+import com.projects.loto_fine.classes_utilitaires.ValidationDialogFragment;
 
 public class ParametresActivity extends AppCompatActivity {
 

@@ -4,24 +4,16 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.Display;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.Toast;
 
 import androidx.core.content.res.ResourcesCompat;
 
-import com.projects.loto_fine.Constants;
+import com.projects.loto_fine.constantes.Constants;
 import com.projects.loto_fine.R;
-import com.projects.loto_fine.activites.GestionPartieActivity;
 import com.projects.loto_fine.classes_metier.Carton;
-import com.projects.loto_fine.classes_metier.CaseCarton;
-import com.projects.loto_fine.classes_metier.ElementCliquable;
+import com.projects.loto_fine.classes_utilitaires.ElementCliquable;
 
 import java.util.ArrayList;
 

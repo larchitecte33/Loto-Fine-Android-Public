@@ -1,4 +1,4 @@
-package com.projects.loto_fine.classes_metier;
+package com.projects.loto_fine.classes_utilitaires;
 
 /**
  * Classe représentant un élément cliquable.

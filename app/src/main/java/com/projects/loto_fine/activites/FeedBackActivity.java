@@ -12,14 +12,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ScrollView;
 
-import com.projects.loto_fine.Constants;
-import com.projects.loto_fine.QuestionAdapter;
+import com.projects.loto_fine.constantes.Constants;
+import com.projects.loto_fine.adapters.QuestionAdapter;
 import com.projects.loto_fine.R;
 import com.projects.loto_fine.classes_metier.Question;
-import com.projects.loto_fine.classes_metier.RequeteHTTP;
-import com.projects.loto_fine.classes_metier.ValidationDialogFragment;
+import com.projects.loto_fine.classes_utilitaires.RequeteHTTP;
+import com.projects.loto_fine.classes_utilitaires.ValidationDialogFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;

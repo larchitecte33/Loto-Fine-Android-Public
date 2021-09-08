@@ -12,13 +12,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 
-import com.projects.loto_fine.Constants;
-import com.projects.loto_fine.LotAdapter;
+import com.projects.loto_fine.constantes.Constants;
+import com.projects.loto_fine.adapters.LotAdapter;
 import com.projects.loto_fine.R;
 import com.projects.loto_fine.classes_metier.Lot;
-import com.projects.loto_fine.classes_metier.OuiNonDialogFragment;
-import com.projects.loto_fine.classes_metier.RequeteHTTP;
-import com.projects.loto_fine.classes_metier.ValidationDialogFragment;
+import com.projects.loto_fine.classes_utilitaires.OuiNonDialogFragment;
+import com.projects.loto_fine.classes_metier.Personne;
+import com.projects.loto_fine.classes_utilitaires.RequeteHTTP;
+import com.projects.loto_fine.classes_utilitaires.ValidationDialogFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,14 +47,11 @@ public class VisualiserListeLotsActivity extends AppCompatActivity implements Ou
         if (source == "rechercheListeLots") {
             if (isErreur) {
                 message = "Une erreur est survenue : ";
-                /*vdf = new ValidationDialogFragment(message + reponse, false);
-                vdf.show(getSupportFragmentManager(), "");*/
                 AccueilActivity.afficherMessage(message + reponse, false, getSupportFragmentManager());
             }
             else {
                 try {
                     ja = new JSONArray(reponse);
-
 
                     // On parcourt le JSONArray
                     for(int i = 0 ; i < ja.length() ; i++) {
@@ -74,6 +72,40 @@ public class VisualiserListeLotsActivity extends AppCompatActivity implements Ou
                             lot.setEnCoursDeJeu(true);
                         else
                             lot.setEnCoursDeJeu(false);
+
+                        if(!jo.isNull("gagnant")) {
+                            Personne gagnant = new Personne();
+                            JSONObject joGagnant = jo.getJSONObject("gagnant");
+                            gagnant.setId(joGagnant.getInt("id"));
+                            gagnant.setNom(joGagnant.getString("nom"));
+                            gagnant.setPrenom(joGagnant.getString("prenom"));
+                            gagnant.setEmail(joGagnant.getString("email"));
+                            lot.setGagnant(gagnant);
+                        }
+                        else {
+                            lot.setGagnant(null);
+                        }
+
+                        if(jo.getString("adresseRetrait").equals("null")) {
+                            lot.setAdresseRetrait(null);
+                        }
+                        else {
+                            lot.setAdresseRetrait(jo.getString("adresseRetrait"));
+                        }
+
+                        if(jo.getString("cpRetrait").equals("null")) {
+                            lot.setCpRetrait(null);
+                        }
+                        else {
+                            lot.setCpRetrait(jo.getString("cpRetrait"));
+                        }
+
+                        if(jo.getString("villeRetrait").equals("null")) {
+                            lot.setVilleRetrait(null);
+                        }
+                        else {
+                            lot.setVilleRetrait(jo.getString("villeRetrait"));
+                        }
                         
                         lots.add(lot);
                     }
@@ -190,8 +222,9 @@ public class VisualiserListeLotsActivity extends AppCompatActivity implements Ou
             String mdp = sharedPref.getString("mdpUtilisateur", "");
 
             // On va chercher la liste des lots pour la partie.
-            String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIAnimateur + "/animateur/recuperation-lots?email=" + email +
-                    "&mdp=" + mdp + "&idPartie=" + idPartie;
+            String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIAnimateur + "/animateur/recuperation-lots?email=" +
+                    AccueilActivity.encoderECommercial(email) +
+                    "&mdp=" + AccueilActivity.encoderECommercial(mdp) + "&idPartie=" + idPartie;
             RequeteHTTP requeteHTTP = new RequeteHTTP(getApplicationContext(),
                     adresse, VisualiserListeLotsActivity.this);
             requeteHTTP.traiterRequeteHTTPJSONArray(VisualiserListeLotsActivity.this, "RechercheListeLots", "GET", getSupportFragmentManager());
@@ -244,8 +277,9 @@ public class VisualiserListeLotsActivity extends AppCompatActivity implements Ou
                 this.idLotSupprime = Integer.valueOf(args.get("idLot"));
 
                 // On demande la suppression du lot.
-                String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIAnimateur + "/animateur/suppression-lot?email=" + email +
-                        "&mdp=" + mdp + "&idLot=" + args.get("idLot");
+                String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIAnimateur + "/animateur/suppression-lot?email=" +
+                        AccueilActivity.encoderECommercial(email) +
+                        "&mdp=" + AccueilActivity.encoderECommercial(mdp) + "&idLot=" + args.get("idLot");
                 RequeteHTTP requeteHTTP = new RequeteHTTP(getApplicationContext(), adresse, VisualiserListeLotsActivity.this);
 
                 requeteHTTP.traiterRequeteHTTPJSON(VisualiserListeLotsActivity.this, "SuppressionLot", "DELETE", "", getSupportFragmentManager());

@@ -1,4 +1,4 @@
-package com.projects.loto_fine;
+package com.projects.loto_fine.constantes;
 
 import android.graphics.Color;
 
@@ -130,6 +130,7 @@ public class Constants {
     //public static String adresseServeurDefaut = "http://localhost";
     public static int portMicroserviceGUIParticipant = 8081;
     public static int portMicroserviceGUIAnimateur = 8083;
+    public static int portMicroserviceStatistiquesEtClassements = 8085;
 
 
     public static int LEFT_BOUTON_TIRER_NUMERO_MAQUETTE = 87;
@@ -182,4 +183,8 @@ public class Constants {
     public static int TAILLE_MAX_CP = 10;
     public static int TAILLE_MAX_VILLE = 50;
     public static int TAILLE_MAX_ADRESSE = 100;
+
+    public static String CRITERE_NB_LOTS_GAGNES = "NB_LOTS_GAGNES";
+    public static String CRITERE_NB_PARTICIPATIONS = "NB_PARTICIPATIONS";
+    public static String CRITERE_NB_MOYEN_CARTONS = "NB_MOYEN_CARTONS";
 }

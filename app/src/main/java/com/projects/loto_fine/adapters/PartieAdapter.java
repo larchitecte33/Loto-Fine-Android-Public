@@ -1,18 +1,12 @@
-package com.projects.loto_fine;
+package com.projects.loto_fine.adapters;
 
-import android.app.AlertDialog;
-import android.app.Application;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.PixelFormat;
-import android.os.Build;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -24,32 +18,27 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.projects.loto_fine.activites.AccueilActivity;
-import com.projects.loto_fine.activites.AjoutLotActivity;
+import com.projects.loto_fine.activites.DescriptionMethodeReglementActivity;
+import com.projects.loto_fine.activites.MesInscriptionsActivity;
+import com.projects.loto_fine.activites.VisualiserListeInscritsActivity;
+import com.projects.loto_fine.constantes.Constants;
+import com.projects.loto_fine.R;
 import com.projects.loto_fine.activites.GestionPartieActivity;
 import com.projects.loto_fine.activites.MainActivity;
 import com.projects.loto_fine.activites.RecherchePartieActivity;
 import com.projects.loto_fine.activites.VisualiserListeLotsActivity;
 import com.projects.loto_fine.classes_metier.Lot;
-import com.projects.loto_fine.classes_metier.NumberPickerDialogFragment;
+import com.projects.loto_fine.classes_utilitaires.NumberPickerDialogFragment;
 import com.projects.loto_fine.classes_metier.Partie;
 import com.projects.loto_fine.classes_metier.Personne;
-import com.projects.loto_fine.classes_metier.RequeteHTTP;
-import com.projects.loto_fine.classes_metier.ValidationDialogFragment;
+import com.projects.loto_fine.classes_utilitaires.RequeteHTTP;
+import com.projects.loto_fine.classes_utilitaires.ValidationDialogFragment;
 
 import java.math.RoundingMode;
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
-import java.time.temporal.ChronoUnit.*;
 
 public class PartieAdapter extends ArrayAdapter<Partie> implements NumberPicker.OnValueChangeListener {
     private final Context context;
@@ -59,16 +48,19 @@ public class PartieAdapter extends ArrayAdapter<Partie> implements NumberPicker.
     private int idPartie, idPartieInscription = -1;
     private AppCompatActivity activity;
     private ArrayList<Integer> listeInscriptions;
+    private ArrayList<Boolean> validationInscriptions;
     private Personne animateur;
+    private boolean isInscriptionValidee;
     private FragmentManager fragmentManager;
 
     public PartieAdapter(AppCompatActivity activity, Context context, int ressource, LinkedList<Partie> parties,
-                         ArrayList<Integer> listeInscriptions, FragmentManager fragmentManager) {
+                         ArrayList<Integer> listeInscriptions, ArrayList<Boolean> validationInscriptions, FragmentManager fragmentManager) {
         super(context, ressource, parties);
         this.context = context;
         this.parties = parties;
         this.activity = activity;
         this.listeInscriptions = listeInscriptions;
+        this.validationInscriptions = validationInscriptions;
         this.fragmentManager = fragmentManager;
     }
 
@@ -91,10 +83,16 @@ public class PartieAdapter extends ArrayAdapter<Partie> implements NumberPicker.
         TextView tvSommeTotaleLots = (TextView)convertView.findViewById(R.id.recherche_partie_adapter_somme_totale_lots);
         TextView tvPrixCarton = (TextView)convertView.findViewById(R.id.recherche_partie_adapter_prix_carton);
         TextView tvStatutParticipantAnimateur = (TextView)convertView.findViewById(R.id.recherche_partie_adapter_statut_participant_animateur);
+        TextView tvStatutInscription = (TextView)convertView.findViewById(R.id.recherche_partie_adapter_statut_inscription);
+        TextView tvEmailAnimateur = (TextView)convertView.findViewById(R.id.recherche_partie_adapter_email_animateur);
+        TextView tvNumTelAnimateur = (TextView)convertView.findViewById(R.id.recherche_partie_adapter_numtel_animateur);
+
         Button btnInscriptionPartie = (Button)convertView.findViewById(R.id.recherche_partie_adapter_btn_inscription_partie);
         Button btnDesinscriptionPartie = (Button)convertView.findViewById(R.id.recherche_partie_adapter_btn_desinscription_partie);
         Button btnMesInscriptionsSeDesinscrire = (Button)convertView.findViewById(R.id.recherche_partie_adapter_bouton_se_desinscrire);
         Button btnMesInscriptionsDemarrerPartie = (Button)convertView.findViewById(R.id.recherche_partie_adapter_bouton_demarrer_partie);
+        Button btnVisualiserListeInscrits = (Button)convertView.findViewById(R.id.recherche_partie_adapter_bouton_visualiser_liste_inscrits);
+        Button btnCommentRegler = (Button)convertView.findViewById(R.id.recherche_partie_adapter_bouton_comment_regler);
         //Button btnModifierPartie = (Button)convertView.findViewById(R.id.recherche_partie_adapter_btn_modifier_partie);
         LinearLayout layoutDemarrerPartie = (LinearLayout)convertView.findViewById(R.id.recherche_partie_adapter_layout_demarrer_partie);
        // LinearLayout layoutAjouterSupprimerLot = (LinearLayout)convertView.findViewById(R.id.recherche_partie_adapter_layout_ajouter_supprimer_lots);
@@ -114,19 +112,22 @@ public class PartieAdapter extends ArrayAdapter<Partie> implements NumberPicker.
         btnMesInscriptionsDemarrerPartie.setTextColor(ContextCompat.getColor(getContext(), R.color.vert));
         btnVisualiserListeLots.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.violet));
         btnVisualiserListeLots.setTextColor(ContextCompat.getColor(getContext(), R.color.vert));
+        btnVisualiserListeInscrits.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.violet));
+        btnVisualiserListeInscrits.setTextColor(ContextCompat.getColor(getContext(), R.color.vert));
 
 
         idPartie = parties.get(position).getId();
         animateur = parties.get(position).getAnimateur();
         double sommeTotaleLots = 0.0;
         DecimalFormat df = new DecimalFormat("0.00");
+        isInscriptionValidee = validationInscriptions.get(position);
 
         String patternDate = "dd/MM/yyyy HH:mm";
         //DateTimeFormatter dtf = DateTimeFormatter.ofPattern(patternDate);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
         tvdateHeure.setText("Date et heure : " + simpleDateFormat.format(parties.get(position).getDate())); // parties.get(position).getDate().format(dtf));
-        tvLieuDeRetrait.setText(parties.get(position).getAdresse() + " " + parties.get(position).getCp() + " " + parties.get(position).getVille());
+        tvLieuDeRetrait.setText("Lieu de retrait : " + parties.get(position).getAdresse() + " " + parties.get(position).getCp() + " " + parties.get(position).getVille());
 
         ArrayList<Lot> lots = parties.get(position).getLots();
 
@@ -154,6 +155,10 @@ public class PartieAdapter extends ArrayAdapter<Partie> implements NumberPicker.
             if (listeInscriptions.indexOf(idPartie) == -1) {
                 btnInscriptionPartie.setVisibility(View.VISIBLE);
                 btnDesinscriptionPartie.setVisibility(View.GONE);
+                tvStatutParticipantAnimateur.setVisibility(View.GONE);
+                tvStatutInscription.setVisibility(View.GONE);
+                tvEmailAnimateur.setVisibility(View.GONE);
+                tvNumTelAnimateur.setVisibility(View.GONE);
             }
             // Sinon, on masque le bouton d'inscription et on affiche le bouton de désinscription.
             else {
@@ -163,15 +168,35 @@ public class PartieAdapter extends ArrayAdapter<Partie> implements NumberPicker.
                 // Si l'utilisateur est animateur de la partie, alors on va afficher l'information.
                 if(sharedPref.getString("emailUtilisateur", "").equals(animateur.getEmail())) {
                     tvStatutParticipantAnimateur.setText("Vous êtes animateur de cette partie.");
+                    tvStatutParticipantAnimateur.setVisibility(View.VISIBLE);
+                    tvStatutInscription.setVisibility(View.GONE);
+                    tvEmailAnimateur.setVisibility(View.GONE);
+                    tvNumTelAnimateur.setVisibility(View.GONE);
                 }
                 // Sinon, on va afficher une information indiquant que l'utilisateur est participant.
                 else {
+                    tvStatutParticipantAnimateur.setVisibility(View.VISIBLE);
                     tvStatutParticipantAnimateur.setText("Vous êtes participant de cette partie.");
+
+                    tvStatutInscription.setVisibility(View.VISIBLE);
+
+                    if(isInscriptionValidee) {
+                        tvStatutInscription.setText("Votre inscription est validée");
+                    }
+                    else {
+                        tvStatutInscription.setText("Votre inscription n'est pas validée");
+                    }
+
+                    tvEmailAnimateur.setVisibility(View.VISIBLE);
+                    tvNumTelAnimateur.setVisibility(View.VISIBLE);
+                    tvEmailAnimateur.setText("E-mail de l'animateur : " + animateur.getEmail());
+                    tvNumTelAnimateur.setText("N° tél de l'animateur : " + animateur.getNumtel());
                 }
             }
 
             btnMesInscriptionsDemarrerPartie.setVisibility(View.GONE);
             btnMesInscriptionsSeDesinscrire.setVisibility(View.GONE);
+            btnVisualiserListeInscrits.setVisibility(View.GONE);
             layoutDemarrerPartie.setVisibility(View.GONE);
         }
         // MesInscriptionsActivity
@@ -189,10 +214,29 @@ public class PartieAdapter extends ArrayAdapter<Partie> implements NumberPicker.
             // Si l'utilisateur est animateur de la partie, alors on va afficher l'information.
             if(sharedPref.getString("emailUtilisateur", "").equals(animateur.getEmail())) {
                 tvStatutParticipantAnimateur.setText("Vous êtes animateur de cette partie.");
+                tvStatutInscription.setVisibility(View.GONE);
+                btnVisualiserListeInscrits.setVisibility(View.VISIBLE);
+
+                tvEmailAnimateur.setVisibility(View.GONE);
+                tvNumTelAnimateur.setVisibility(View.GONE);
             }
             // Sinon, on va afficher une information indiquant que l'utilisateur est participant.
             else {
                 tvStatutParticipantAnimateur.setText("Vous êtes participant de cette partie.");
+
+                if(isInscriptionValidee) {
+                    tvStatutInscription.setText("Votre inscription est validée");
+                }
+                else {
+                    tvStatutInscription.setText("Votre inscription n'est pas validée");
+                }
+
+                btnVisualiserListeInscrits.setVisibility(View.GONE);
+
+                tvEmailAnimateur.setVisibility(View.VISIBLE);
+                tvNumTelAnimateur.setVisibility(View.VISIBLE);
+                tvEmailAnimateur.setText("E-mail de l'animateur : " + animateur.getEmail());
+                tvNumTelAnimateur.setText("N° tél de l'animateur : " + animateur.getNumtel());
             }
         }
 
@@ -268,6 +312,7 @@ public class PartieAdapter extends ArrayAdapter<Partie> implements NumberPicker.
             public void onClick(View v) {
                 idPartieInscription = parties.get(position).getId();
                 animateur = parties.get(position).getAnimateur();
+                isInscriptionValidee = validationInscriptions.get(position);
 
                 String email = sharedPref.getString("emailUtilisateur", "");
                 Intent intent = null;
@@ -276,14 +321,23 @@ public class PartieAdapter extends ArrayAdapter<Partie> implements NumberPicker.
                 if(email.equals(animateur.getEmail())) {
                     intent = new Intent(getContext(), GestionPartieActivity.class);
                     intent.putExtra("idPartie", idPartieInscription);
+                    getContext().startActivity(intent);
                 }
                 // Sinon, on lance l'activity de permettant de joueur à la partie de loto.
                 else {
-                    intent = new Intent(getContext(), MainActivity.class);
-                    intent.putExtra("idPartie", idPartieInscription);
-                }
+                    if(!isInscriptionValidee) {
+                        String messageErreur = "Votre inscription à cette partie n'a pas encore été validée. Si vous avez effectué le réglement de la partie, " +
+                                "veuillez contacter l'animateur afin qu'il valide votre inscription.";
 
-                getContext().startActivity(intent);
+                        ValidationDialogFragment vdf = new ValidationDialogFragment(messageErreur, false);
+                        vdf.show(((MesInscriptionsActivity)context).getSupportFragmentManager(), "");
+                    }
+                    else {
+                        intent = new Intent(getContext(), MainActivity.class);
+                        intent.putExtra("idPartie", idPartieInscription);
+                        getContext().startActivity(intent);
+                    }
+                }
             }
         });
 
@@ -338,6 +392,27 @@ public class PartieAdapter extends ArrayAdapter<Partie> implements NumberPicker.
                         requeteHTTP.traiterRequeteHTTPJSON(activity, "DesinscriptionPartie", "DELETE", "", fragmentManager);
                     }
                 }
+            }
+        });
+
+        btnVisualiserListeInscrits.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                idPartieInscription = parties.get(position).getId();
+                Intent intent = new Intent(getContext(), VisualiserListeInscritsActivity.class);
+                intent.putExtra("idPartie", idPartieInscription);
+                getContext().startActivity(intent);
+            }
+        });
+
+        btnCommentRegler.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                idPartieInscription = parties.get(position).getId();
+                Intent intent = new Intent(getContext(), DescriptionMethodeReglementActivity.class);
+                intent.putExtra("idPartie", idPartieInscription);
+                intent.putExtra("source", nomActivitySource);
+                getContext().startActivity(intent);
             }
         });
 

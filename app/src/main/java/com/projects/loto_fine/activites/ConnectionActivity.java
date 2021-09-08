@@ -7,18 +7,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.JsonReader;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.projects.loto_fine.Constants;
-import com.projects.loto_fine.MessageBox;
+import com.projects.loto_fine.constantes.Constants;
 import com.projects.loto_fine.R;
-import com.projects.loto_fine.classes_metier.RequeteHTTP;
-import com.projects.loto_fine.classes_metier.ValidationDialogFragment;
+import com.projects.loto_fine.classes_utilitaires.RequeteHTTP;
+import com.projects.loto_fine.classes_utilitaires.ValidationDialogFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,7 +50,8 @@ public class ConnectionActivity extends AppCompatActivity implements ValidationD
                             AccueilActivity.afficherMessage("Veuillez renseigner l'adresse du serveur dans les paramètres.", false, getSupportFragmentManager());
                         }
                         else {
-                            String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIParticipant + "/participant/get_infos_personne?email=" + edSaisirEmail.getText();
+                            String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIParticipant + "/participant/get_infos_personne?email=" +
+                                    AccueilActivity.encoderECommercial(edSaisirEmail.getText().toString());
                             RequeteHTTP requeteHTTP = new RequeteHTTP(getBaseContext(),
                                     adresse, ConnectionActivity.this);
                             requeteHTTP.traiterRequeteHTTPJSON(ConnectionActivity.this, "ObtentionInfosPersonne", "GET", "", getSupportFragmentManager());
@@ -146,8 +145,8 @@ public class ConnectionActivity extends AppCompatActivity implements ValidationD
 
                         //String adresseServeur = "http://192.168.1.17:8081";
                         String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIParticipant +
-                                "/participant/verif-mdp?email=" + edSaisirEmail.getText() + "&mdp=" +
-                                edSaisirMdp.getText();
+                                "/participant/verif-mdp?email=" + AccueilActivity.encoderECommercial(edSaisirEmail.getText().toString()) + "&mdp=" +
+                                AccueilActivity.encoderECommercial(edSaisirMdp.getText().toString());
                         RequeteHTTP requeteHTTP = new RequeteHTTP(getBaseContext(),
                                 adresse, ConnectionActivity.this);
                         requeteHTTP.traiterRequeteHTTPJSON(ConnectionActivity.this, "Connexion", "GET", "", getSupportFragmentManager());

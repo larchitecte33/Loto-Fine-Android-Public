@@ -38,6 +38,24 @@
         android:layout_marginLeft="50px"
         android:text="Position du lot : "
         android:textSize="@dimen/text_size"></TextView>
+    <TextView
+        android:id="@+id/visualiser_liste_lots_adapter_remporte_par"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="left"
+        android:layout_marginLeft="50px"
+        android:text="Remporté par : "
+        android:textSize="@dimen/text_size"></TextView>
+    <TextView
+        android:id="@+id/visualiser_liste_lots_adapter_adresse_retrait"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="left"
+        android:layout_marginLeft="50px"
+        android:text="Adresse retrait : "
+        android:textSize="@dimen/text_size"></TextView>
     <LinearLayout
         android:id="@+id/visualiser_liste_lots_adapter_layout_modifier_supprimer_lot"
         android:layout_width="wrap_content"

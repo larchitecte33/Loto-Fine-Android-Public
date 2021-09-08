@@ -1,4 +1,4 @@
-package com.projects.loto_fine;
+package com.projects.loto_fine.stomp_client;
 
 import android.app.Activity;
 import android.util.Log;

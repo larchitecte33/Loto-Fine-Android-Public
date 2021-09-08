@@ -1,4 +1,4 @@
-package com.projects.loto_fine;
+package com.projects.loto_fine.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.projects.loto_fine.R;
 import com.projects.loto_fine.classes_metier.Question;
 
 import java.util.LinkedList;

@@ -43,6 +43,30 @@
         android:layout_marginLeft="50px"
         android:text=""
         android:textSize="@dimen/text_size"></TextView>
+    <TextView
+        android:id="@+id/recherche_partie_adapter_statut_inscription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="50px"
+        android:text=""
+        android:textSize="@dimen/text_size"></TextView>
+    <TextView
+        android:id="@+id/recherche_partie_adapter_email_animateur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="50px"
+        android:text=""
+        android:textSize="@dimen/text_size"></TextView>
+    <TextView
+        android:id="@+id/recherche_partie_adapter_numtel_animateur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="50px"
+        android:text=""
+        android:textSize="@dimen/text_size"></TextView>
     <Button
         android:id="@+id/recherche_partie_adapter_btn_inscription_partie"
         android:layout_width="wrap_content"
@@ -69,6 +93,8 @@
         android:orientation="horizontal"
         android:layout_below="@id/scrollView"
         android:layout_gravity="center"
+        android:layout_marginLeft="10px"
+        android:layout_marginRight="10px"
         android:visibility="gone">
 
         <Button
@@ -107,12 +133,33 @@
         android:textColor="@color/vert"
         android:textSize="@dimen/text_size"></Button>
 
+    <Button
+        android:id="@+id/recherche_partie_adapter_bouton_comment_regler"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Comment régler"
+        android:backgroundTint="@color/violet"
+        android:textColor="@color/vert"
+        android:textSize="@dimen/text_size"></Button>
+
+    <Button
+        android:id="@+id/recherche_partie_adapter_bouton_visualiser_liste_inscrits"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Visualiser liste inscrits"
+        android:backgroundTint="@color/violet"
+        android:textColor="@color/vert"
+        android:textSize="@dimen/text_size"
+        android:visibility="gone"></Button>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="3dp"
         android:layout_marginLeft="50px"
         android:layout_marginRight="50px"
         android:layout_marginTop="10px"
-        android:backgroundTint="@color/violet"
+        android:background="@color/violet"
         android:textColor="@color/vert"/>
 </LinearLayout>

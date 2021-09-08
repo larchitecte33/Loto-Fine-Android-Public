@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activites.CreerPartieActivity">
+    tools:context=".activites.StatistiquesActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,7 +30,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/vert"
-                android:text="@string/subtitle_creation_partie"
+                android:text="@string/subtitle_statistiques"
                 android:textSize="@dimen/text_size"></TextView>
         </LinearLayout>
         <LinearLayout
@@ -57,11 +57,11 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10px"
                         android:layout_weight="@dimen/weight_textview_creation_compte"
-                        android:text="@string/lbl_adresse"
+                        android:text="@string/lbl_date_debut"
                         android:textSize="@dimen/text_size"></TextView>
 
                     <EditText
-                        android:id="@+id/creer_partie_edit_saisir_adresse"
+                        android:id="@+id/visu_stats_edit_date_debut"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10px"
@@ -69,7 +69,7 @@
                         android:background="@drawable/backwithborder"
                         android:ellipsize="start"
                         android:gravity="center_horizontal"
-                        android:hint="@string/hint_saisir_adresse_partie"
+                        android:hint="@string/hint_choisir_date_debut"
                         android:textSize="@dimen/text_size"></EditText>
                 </LinearLayout>
 
@@ -84,11 +84,11 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10px"
                         android:layout_weight="@dimen/weight_textview_creation_compte"
-                        android:text="@string/lbl_date_heure"
+                        android:text="@string/lbl_date_fin"
                         android:textSize="@dimen/text_size"></TextView>
 
                     <EditText
-                        android:id="@+id/creer_partie_edit_saisir_date_heure"
+                        android:id="@+id/visu_stats_edit_date_fin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10px"
@@ -96,117 +96,48 @@
                         android:background="@drawable/backwithborder"
                         android:ellipsize="start"
                         android:gravity="center_horizontal"
-                        android:hint="@string/hint_choisir_date_heure"
+                        android:hint="@string/hint_choisir_date_fin"
                         android:textSize="@dimen/text_size"></EditText>
                 </LinearLayout>
 
-                <LinearLayout
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="75px">
+                    <TextView
+                        android:id="@+id/visu_stats_lbl_nb_lots_gagnes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Nombre de lots gagnés : non défini"></TextView>
+                </RelativeLayout>
+
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginTop="6px">
-
                     <TextView
-                        android:layout_width="match_parent"
+                        android:id="@+id/visu_stats_lbl_nb_participations"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10px"
-                        android:layout_weight="@dimen/weight_textview_creation_compte"
-                        android:text="@string/lbl_cp"
-                        android:textSize="@dimen/text_size"></TextView>
+                        android:layout_centerInParent="true"
+                        android:text="Nombre de participations : non défini"></TextView>
+                </RelativeLayout>
 
-                    <EditText
-                        android:id="@+id/creer_partie_edit_saisir_code_postal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="10px"
-                        android:layout_weight="@dimen/weight_edit_creation_compte"
-                        android:background="@drawable/backwithborder"
-                        android:ellipsize="start"
-                        android:gravity="center_horizontal"
-                        android:hint="@string/hint_saisir_cp_partie"
-                        android:textSize="@dimen/text_size"></EditText>
-                </LinearLayout>
-
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginTop="6px">
-
                     <TextView
-                        android:layout_width="match_parent"
+                        android:id="@+id/visu_stats_lbl_nb_moyen_cartons"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10px"
-                        android:layout_weight="@dimen/weight_textview_creation_compte"
-                        android:text="@string/lbl_ville"
-                        android:textSize="@dimen/text_size"></TextView>
-
-                    <EditText
-                        android:id="@+id/creer_partie_edit_saisir_ville"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="10px"
-                        android:layout_weight="@dimen/weight_edit_creation_compte"
-                        android:background="@drawable/backwithborder"
-                        android:ellipsize="start"
-                        android:gravity="center_horizontal"
-                        android:hint="@string/hint_saisir_ville_partie"
-                        android:textSize="@dimen/text_size"></EditText>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="6px">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="10px"
-                        android:layout_weight="@dimen/weight_textview_creation_compte"
-                        android:text="@string/lbl_prix_carton"
-                        android:textSize="@dimen/text_size"></TextView>
-
-                    <EditText
-                        android:id="@+id/creer_partie_edit_saisir_prix_carton"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="10px"
-                        android:layout_weight="@dimen/weight_edit_creation_compte"
-                        android:background="@drawable/backwithborder"
-                        android:ellipsize="start"
-                        android:gravity="center_horizontal"
-                        android:hint="@string/hint_saisir_prix_carton"
-                        android:textSize="@dimen/text_size"></EditText>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="6px">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="10px"
-                        android:layout_weight="@dimen/weight_textview_creation_compte"
-                        android:text="@string/lbl_methode_reglement"
-                        android:textSize="@dimen/text_size"></TextView>
-
-                    <EditText
-                        android:id="@+id/creer_partie_edit_saisir_methode_reglement"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="@dimen/weight_edit_creation_compte"
-                        android:lines="8"
-                        android:background="@drawable/backwithborder"
-                        android:hint="@string/hint_description_methode_reglement"
-                        android:gravity="center"
-                        android:textSize="@dimen/text_size"></EditText>
-
-                </LinearLayout>
+                        android:layout_centerInParent="true"
+                        android:text="Nombre moyen de cartons : non défini"></TextView>
+                </RelativeLayout>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -224,7 +155,7 @@
             android:layout_marginRight="50px">
 
             <Button
-                android:id="@+id/bouton_annuler_creation_partie"
+                android:id="@+id/bouton_annuler_visualisation_statistiques"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
@@ -244,7 +175,7 @@
             android:layout_marginLeft="50px">
 
             <Button
-                android:id="@+id/bouton_valider_creation_partie"
+                android:id="@+id/bouton_valider_visualisation_statistiques"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
@@ -256,5 +187,4 @@
         </LinearLayout>
 
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

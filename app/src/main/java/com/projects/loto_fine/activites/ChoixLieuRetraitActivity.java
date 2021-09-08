@@ -11,18 +11,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.projects.loto_fine.Constants;
+import com.projects.loto_fine.constantes.Constants;
 import com.projects.loto_fine.R;
-import com.projects.loto_fine.classes_metier.RequeteHTTP;
-import com.projects.loto_fine.classes_metier.ValidationDialogFragment;
+import com.projects.loto_fine.classes_utilitaires.RequeteHTTP;
+import com.projects.loto_fine.classes_utilitaires.ValidationDialogFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 
 public class ChoixLieuRetraitActivity extends AppCompatActivity implements ValidationDialogFragment.ValidationDialogListener {
 

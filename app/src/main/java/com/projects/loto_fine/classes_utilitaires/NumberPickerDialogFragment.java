@@ -1,4 +1,4 @@
-package com.projects.loto_fine.classes_metier;
+package com.projects.loto_fine.classes_utilitaires;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

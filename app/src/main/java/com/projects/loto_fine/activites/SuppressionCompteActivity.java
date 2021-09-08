@@ -10,10 +10,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.projects.loto_fine.Constants;
+import com.projects.loto_fine.constantes.Constants;
 import com.projects.loto_fine.R;
-import com.projects.loto_fine.classes_metier.RequeteHTTP;
-import com.projects.loto_fine.classes_metier.ValidationDialogFragment;
+import com.projects.loto_fine.classes_utilitaires.RequeteHTTP;
+import com.projects.loto_fine.classes_utilitaires.ValidationDialogFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,8 +51,10 @@ public class SuppressionCompteActivity extends AppCompatActivity implements Vali
                         AccueilActivity.afficherMessage("Le compte n'a pas été trouvé.", false, getSupportFragmentManager());
                     }
                     else {
-                        String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIParticipant + "/participant/obtenir_liste_inscriptions?email=" + email +
-                                "&mdp=" + mdp + "&inclurePartiesPassees=0&inclurePartiesAnimateur=1";
+                        String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIParticipant + "/participant/obtenir_liste_inscriptions?" +
+                                "email=" + AccueilActivity.encoderECommercial(email) +
+                                "&mdp=" + AccueilActivity.encoderECommercial(mdp) +
+                                "&inclurePartiesPassees=0&inclurePartiesAnimateur=1&inclurePartiesAnimeesDansPasse=0";
                         RequeteHTTP requeteHTTP = new RequeteHTTP(getApplicationContext(), adresse, SuppressionCompteActivity.this);
                         requeteHTTP.traiterRequeteHTTPJSONArray(SuppressionCompteActivity.this, "RechercheListeInscriptions", "GET", getSupportFragmentManager());
                     }
@@ -77,6 +79,7 @@ public class SuppressionCompteActivity extends AppCompatActivity implements Vali
 
                     for(int i = 0 ; i < ja.length() ; i++) {
                         jo = ja.getJSONObject(i);
+                        jo = jo.getJSONObject("partie");
 
                         isExceptionDateHeurePartie = false;
 
@@ -101,22 +104,25 @@ public class SuppressionCompteActivity extends AppCompatActivity implements Vali
                                 false, getSupportFragmentManager());
                     }
                     else {
-                        String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIParticipant + "/participant/suppression-compte?email=" + email +
-                                "&mdp=" + mdp;
+                        String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIParticipant + "/participant/suppression-compte?" +
+                                "email=" + AccueilActivity.encoderECommercial(email) +
+                                "&mdp=" + AccueilActivity.encoderECommercial(mdp);
                         RequeteHTTP requeteHTTP = new RequeteHTTP(getApplicationContext(), adresse, SuppressionCompteActivity.this);
                         requeteHTTP.traiterRequeteHTTPJSON(SuppressionCompteActivity.this, "SuppressionCompte", "DELETE", "", getSupportFragmentManager());
                     }
                 }
                 catch(JSONException e) {
                     try {
-                        jo = new JSONObject(reponse);
+                        ja = new JSONArray(reponse);
 
-                        Object objErreur = jo.opt("erreur");
+                        if(ja.length() == 1) {
+                            JSONObject objErreur = ja.getJSONObject(0);
 
-                        // Si on a récupéré une erreur, on l'affiche.
-                        if (objErreur != null) {
-                            message = (String) objErreur;
-                            AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
+                            // Si on a bien récupéré une erreur, on l'affiche.
+                            if (objErreur != null) {
+                                message = "Erreur : " + objErreur.getString("erreur");
+                                AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
+                            }
                         }
                     }
                     catch(JSONException e2) {

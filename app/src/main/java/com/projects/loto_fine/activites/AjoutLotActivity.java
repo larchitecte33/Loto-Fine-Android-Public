@@ -12,10 +12,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
-import com.projects.loto_fine.Constants;
+import com.projects.loto_fine.constantes.Constants;
 import com.projects.loto_fine.R;
-import com.projects.loto_fine.classes_metier.RequeteHTTP;
-import com.projects.loto_fine.classes_metier.ValidationDialogFragment;
+import com.projects.loto_fine.classes_utilitaires.RequeteHTTP;
+import com.projects.loto_fine.classes_utilitaires.ValidationDialogFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,13 +33,15 @@ public class AjoutLotActivity extends AppCompatActivity implements ValidationDia
         ValidationDialogFragment vdf;
 
         if (source == "recuperationInfosLots") {
+            JSONArray ja;
+
             if(isErreur) {
                 AccueilActivity.afficherMessage("Erreur lors de la récupération des informations concernant les lots : " + reponse, false, getSupportFragmentManager());
             }
             else {
                 try {
                     // On récupère le table de lot sous format JSON.
-                    JSONArray ja = new JSONArray(reponse);
+                    ja = new JSONArray(reponse);
                     JSONObject joLot;
 
                     // On parcourt le tableau de lots.
@@ -56,18 +58,19 @@ public class AjoutLotActivity extends AppCompatActivity implements ValidationDia
                 // Cas où on a pas pu caster notre réponse ne JSONArray.
                 catch(JSONException e) {
                     try {
-                        JSONObject jo = new JSONObject(reponse);
-                        Object objErreur = jo.opt("erreur");
+                        ja = new JSONArray(reponse);
 
-                        if(objErreur.toString() != "") {
-                            AccueilActivity.afficherMessage(objErreur.toString(), false, getSupportFragmentManager());
+                        if (ja.length() == 1) {
+                            JSONObject objErreur = ja.getJSONObject(0);
+
+                            // Si on a bien récupéré une erreur, on l'affiche.
+                            if (objErreur != null) {
+                                message = "Erreur : " + objErreur.getString("erreur");
+                                AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
+                            }
                         }
-                        else {
-                            AccueilActivity.afficherMessage("Errreur inconnue", false, getSupportFragmentManager());
-                        }
-                    }
-                    catch(JSONException e2) {
-                        AccueilActivity.afficherMessage(e2.toString(), false, getSupportFragmentManager());
+                    } catch (JSONException ex) {
+                        AccueilActivity.afficherMessage(ex.getMessage(), false, getSupportFragmentManager());
                     }
                 }
             }
@@ -121,7 +124,7 @@ public class AjoutLotActivity extends AppCompatActivity implements ValidationDia
             String mdp = sharedPref.getString("mdpUtilisateur", "");
 
             String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIAnimateur + "/animateur/recuperation-lots?email="
-                    + email + "&mdp=" + mdp + "&idPartie=" + idPartie;
+                    + AccueilActivity.encoderECommercial(email) + "&mdp=" + AccueilActivity.encoderECommercial(mdp) + "&idPartie=" + idPartie;
 
             RequeteHTTP requeteHTTP = new RequeteHTTP(getApplicationContext(),
                     adresse, AjoutLotActivity.this);
@@ -186,9 +189,10 @@ public class AjoutLotActivity extends AppCompatActivity implements ValidationDia
                         String email = sharedPref.getString("emailUtilisateur", "");
                         String mdp = sharedPref.getString("mdpUtilisateur", "");
 
-                        String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIAnimateur + "/animateur/creation-lot?email=" + email +
-                                "&mdp=" + mdp +
-                                "&idPartie=" + idPartie + "&nomLot=" + nomLot +
+                        String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIAnimateur + "/animateur/creation-lot?email=" +
+                                AccueilActivity.encoderECommercial(email) +
+                                "&mdp=" + AccueilActivity.encoderECommercial(mdp) +
+                                "&idPartie=" + idPartie + "&nomLot=" + AccueilActivity.encoderECommercial(nomLot) +
                                 "&valeurLot=" + valeurLot + "&isALaLigne=" + isALaLigne +
                                 "&position=" + (positionMax + 1);
                         System.out.println("Ajout d'un lot(nomLot = " + nomLot + ", valeurLot = " + valeurLot + ") : " + adresse);

@@ -1,0 +1,47 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginTop="30px">
+    <TextView
+        android:id="@+id/classements_adapter_pos_nom_prenom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="50px"
+        android:text="1er : Beauchemin Liane"
+        android:textSize="@dimen/text_size"></TextView>
+    <TextView
+        android:id="@+id/classements_adapter_nb_lots"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="50px"
+        android:text="10 lots gagnés"
+        android:textSize="@dimen/text_size"></TextView>
+    <TextView
+        android:id="@+id/classements_adapter_nb_participations"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="50px"
+        android:text="7 participations"
+        android:textSize="@dimen/text_size"
+        android:visibility="gone"></TextView>
+    <TextView
+        android:id="@+id/classements_adapter_nb_moyen_cartons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="50px"
+        android:text="4.5 cartons en moyenne"
+        android:textSize="@dimen/text_size"
+        android:visibility="gone"></TextView>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginLeft="50px"
+        android:layout_marginRight="50px"
+        android:layout_marginTop="10px"
+        android:background="@color/violet"/>
+</LinearLayout>

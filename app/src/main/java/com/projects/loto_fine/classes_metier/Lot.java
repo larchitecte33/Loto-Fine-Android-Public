@@ -9,6 +9,7 @@ public class Lot {
     private boolean enCoursDeJeu;
     private String adresseRetrait, cpRetrait, villeRetrait;
     private Partie partie;
+    private Personne gagnant;
 
     // Constructeur
     public Lot(int id, String nom, double valeur, int position, boolean auCartonPlein, boolean enCoursDeJeu, Partie partie) {
@@ -104,5 +105,13 @@ public class Lot {
 
     public void setPartie(Partie partie) {
         this.partie = partie;
+    }
+
+    public Personne getGagnant() {
+        return gagnant;
+    }
+
+    public void setGagnant(Personne gagnant) {
+        this.gagnant = gagnant;
     }
 }

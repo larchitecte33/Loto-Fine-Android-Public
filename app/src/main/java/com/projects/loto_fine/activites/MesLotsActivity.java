@@ -2,7 +2,6 @@ package com.projects.loto_fine.activites;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentManager;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,27 +13,21 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-import com.projects.loto_fine.Constants;
-import com.projects.loto_fine.LotAdapter;
-import com.projects.loto_fine.LotRemporteAdapter;
+import com.projects.loto_fine.constantes.Constants;
+import com.projects.loto_fine.adapters.LotRemporteAdapter;
 import com.projects.loto_fine.R;
 import com.projects.loto_fine.classes_metier.Lot;
-import com.projects.loto_fine.classes_metier.OuiNonDialogFragment;
+import com.projects.loto_fine.classes_utilitaires.OuiNonDialogFragment;
 import com.projects.loto_fine.classes_metier.Partie;
-import com.projects.loto_fine.classes_metier.RequeteHTTP;
-import com.projects.loto_fine.classes_metier.ValidationDialogFragment;
+import com.projects.loto_fine.classes_utilitaires.RequeteHTTP;
+import com.projects.loto_fine.classes_utilitaires.ValidationDialogFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -73,62 +66,73 @@ public class MesLotsActivity extends AppCompatActivity implements OuiNonDialogFr
 
                     ja = new JSONArray(reponse);
                     JSONObject joPartie;
+                    boolean isErreurTrouvee = false;
 
-                    for (int i = 0; i < ja.length(); i++) {
-                        Partie partie;
+                    if(ja.length() == 1) {
+                        jo = ja.getJSONObject(0);
 
-                        jo = ja.getJSONObject(i);
-
-                        idLot = jo.getInt("id");
-                        nomLot = jo.getString("nom");
-                        valeurLot = jo.getDouble("valeur");
-                        positionLot = jo.getInt("position");
-
-                        if (jo.getInt("cartonPlein") == 1)
-                            isAuCartonPlein = true;
-                        else
-                            isAuCartonPlein = false;
-
-                        if (jo.getInt("enCoursDeJeu") == 1)
-                            isEnCoursDeJeu = true;
-                        else
-                            isEnCoursDeJeu = false;
-
-                        joPartie = jo.getJSONObject("partie");
-
-                        if(joPartie != null) {
-                            dateHeurePartieStr = joPartie.getString("date");
-                            isExceptionDateHeurePartie = false;
-
-                            try {
-                                dateHeurePartie = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(dateHeurePartieStr);
-                            } catch (ParseException e) {
-                                isExceptionDateHeurePartie = true;
-                            }
-
-                            if(!isExceptionDateHeurePartie) {
-                                partie = new Partie(joPartie.getInt("id"),
-                                        dateHeurePartie, // .toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
-                                        joPartie.getString("adresse"), joPartie.getString("ville"), joPartie.getString("cp"), null,
-                                        joPartie.getDouble("prixCarton"), null);
-                            }
-                            else {
-                                partie = null;
-                            }
+                        if(jo.optString("erreur") != null) {
+                            isErreurTrouvee = true;
+                            message = "Erreur : " + jo.optString("erreur");
+                            AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
                         }
-                        else {
-                            partie = null;
-                        }
-
-                        Lot lot = new Lot(idLot, nomLot, valeurLot, positionLot, isAuCartonPlein, isEnCoursDeJeu, partie);
-                        lot.setAdresseRetrait(jo.getString("adresseRetrait"));
-                        lot.setCpRetrait(jo.getString("cpRetrait"));
-                        lot.setVilleRetrait(jo.getString("villeRetrait"));
-                        lots.add(lot);
                     }
 
-                    LotRemporteAdapter adapter = new LotRemporteAdapter(this, this, R.layout.activity_mes_lots_adapter, lots);
-                    listLots.setAdapter(adapter);
+                    if(!isErreurTrouvee) {
+                        for (int i = 0; i < ja.length(); i++) {
+                            Partie partie;
+
+                            jo = ja.getJSONObject(i);
+
+                            idLot = jo.getInt("id");
+                            nomLot = jo.getString("nom");
+                            valeurLot = jo.getDouble("valeur");
+                            positionLot = jo.getInt("position");
+
+                            if (jo.getInt("cartonPlein") == 1)
+                                isAuCartonPlein = true;
+                            else
+                                isAuCartonPlein = false;
+
+                            if (jo.getInt("enCoursDeJeu") == 1)
+                                isEnCoursDeJeu = true;
+                            else
+                                isEnCoursDeJeu = false;
+
+                            joPartie = jo.getJSONObject("partie");
+
+                            if (joPartie != null) {
+                                dateHeurePartieStr = joPartie.getString("date");
+                                isExceptionDateHeurePartie = false;
+
+                                try {
+                                    dateHeurePartie = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(dateHeurePartieStr);
+                                } catch (ParseException e) {
+                                    isExceptionDateHeurePartie = true;
+                                }
+
+                                if (!isExceptionDateHeurePartie) {
+                                    partie = new Partie(joPartie.getInt("id"),
+                                            dateHeurePartie, // .toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
+                                            joPartie.getString("adresse"), joPartie.getString("ville"), joPartie.getString("cp"), null,
+                                            joPartie.getDouble("prixCarton"), null);
+                                } else {
+                                    partie = null;
+                                }
+                            } else {
+                                partie = null;
+                            }
+
+                            Lot lot = new Lot(idLot, nomLot, valeurLot, positionLot, isAuCartonPlein, isEnCoursDeJeu, partie);
+                            lot.setAdresseRetrait(jo.getString("adresseRetrait"));
+                            lot.setCpRetrait(jo.getString("cpRetrait"));
+                            lot.setVilleRetrait(jo.getString("villeRetrait"));
+                            lots.add(lot);
+                        }
+
+                        LotRemporteAdapter adapter = new LotRemporteAdapter(this, this, R.layout.activity_mes_lots_adapter, lots);
+                        listLots.setAdapter(adapter);
+                    }
                 } catch (JSONException e) {
                     AccueilActivity.afficherMessage(e.getMessage(), false, getSupportFragmentManager());
                 } catch (Exception e) {
@@ -209,7 +213,8 @@ public class MesLotsActivity extends AppCompatActivity implements OuiNonDialogFr
             }
             else {
                 String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIParticipant +
-                        "/participant/obtenir-lots-personne?email=" + email + "&mdp=" + mdp;
+                        "/participant/obtenir-lots-personne?email=" + AccueilActivity.encoderECommercial(email) +
+                        "&mdp=" + AccueilActivity.encoderECommercial(mdp);
                 RequeteHTTP requeteHTTP = new RequeteHTTP(getApplicationContext(),
                         adresse, MesLotsActivity.this);
                 requeteHTTP.traiterRequeteHTTPJSONArray(MesLotsActivity.this, "RechercheLotsPersonne", "GET", getSupportFragmentManager());

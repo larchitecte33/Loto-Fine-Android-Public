@@ -1,53 +1,38 @@
 package com.projects.loto_fine.activites;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.nfc.FormatException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
-import com.android.volley.TimeoutError;
-import com.projects.loto_fine.Constants;
+import com.projects.loto_fine.constantes.Constants;
 import com.projects.loto_fine.R;
 import com.projects.loto_fine.classes_metier.Carton;
 import com.projects.loto_fine.classes_metier.CaseCarton;
-import com.projects.loto_fine.classes_metier.ElementCliquable;
-import com.projects.loto_fine.classes_metier.OuiNonDialogFragment;
+import com.projects.loto_fine.classes_utilitaires.ElementCliquable;
+import com.projects.loto_fine.classes_utilitaires.OuiNonDialogFragment;
 import com.projects.loto_fine.classes_metier.Personne;
-import com.projects.loto_fine.classes_metier.RequeteHTTP;
-import com.projects.loto_fine.classes_metier.ValidationDialogFragment;
+import com.projects.loto_fine.classes_utilitaires.RequeteHTTP;
+import com.projects.loto_fine.classes_utilitaires.ValidationDialogFragment;
 import com.projects.loto_fine.stomp_client.ClientStomp;
 import com.projects.loto_fine.vues.Plateau;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.kaazing.net.sse.SseEventReader;
-import org.kaazing.net.sse.SseEventSource;
-import org.kaazing.net.sse.SseEventSourceFactory;
-import org.kaazing.net.sse.SseEventType;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.Socket;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;

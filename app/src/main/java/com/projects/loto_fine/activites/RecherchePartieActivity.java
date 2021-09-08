@@ -3,17 +3,12 @@ package com.projects.loto_fine.activites;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -21,14 +16,14 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.projects.loto_fine.Constants;
-import com.projects.loto_fine.PartieAdapter;
+import com.projects.loto_fine.constantes.Constants;
+import com.projects.loto_fine.adapters.PartieAdapter;
 import com.projects.loto_fine.R;
 import com.projects.loto_fine.classes_metier.Lot;
 import com.projects.loto_fine.classes_metier.Partie;
 import com.projects.loto_fine.classes_metier.Personne;
-import com.projects.loto_fine.classes_metier.RequeteHTTP;
-import com.projects.loto_fine.classes_metier.ValidationDialogFragment;
+import com.projects.loto_fine.classes_utilitaires.RequeteHTTP;
+import com.projects.loto_fine.classes_utilitaires.ValidationDialogFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,9 +32,6 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -54,6 +46,7 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
     private ListView listParties;
     private ArrayList<Integer> idInscriptions = new ArrayList<>();
     private LinkedList<Partie> parties = new LinkedList<Partie>();
+    private ArrayList<Boolean> validationInscription = new ArrayList<Boolean>();
     private LinearLayout layoutAttente;
     private TextView tvAttente;
 
@@ -65,6 +58,7 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
 
         if (source == "recherchePartie") {
             parties.clear();
+            validationInscription.clear();
 
             layoutAttente.setVisibility(View.GONE);
             listParties.setVisibility(View.VISIBLE);
@@ -100,6 +94,8 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
                     // On parcourt chaque partie trouvée dans le JSON.
                     for (int i = 0; i < ja.length(); i++) {
                         jo = ja.getJSONObject(i);
+                        validationInscription.add(jo.getBoolean("isReglee")); //
+                        jo = jo.getJSONObject("partie");
 
                         isExceptionDateHeurePartie = false;
 
@@ -153,7 +149,7 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
                     }
 
                     PartieAdapter adapter = new PartieAdapter(this, this, R.layout.activity_recherche_partie_adapter,
-                            parties, idInscriptions, getSupportFragmentManager());
+                            parties, idInscriptions, validationInscription, getSupportFragmentManager());
                     listParties.setAdapter(adapter);
                 }
                 catch(JSONException e) {
@@ -216,20 +212,23 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
 
                     for(int i = 0 ; i < ja.length() ; i++) {
                         jo = ja.getJSONObject(i);
+                        jo = jo.getJSONObject("partie");
 
                         idInscriptions.add(jo.getInt("id"));
                     }
                 }
                 catch(JSONException e) {
                     try {
-                        jo = new JSONObject(reponse);
+                        ja = new JSONArray(reponse);
 
-                        Object objErreur = jo.opt("erreur");
+                        if(ja.length() == 1) {
+                            JSONObject objErreur = ja.getJSONObject(0);
 
-                        // Si on a récupéré une erreur, on l'affiche.
-                        if (objErreur != null) {
-                            message = (String) objErreur;
-                            AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
+                            // Si on a bien récupéré une erreur, on l'affiche.
+                            if (objErreur != null) {
+                                message = "Erreur : " + objErreur.getString("erreur");
+                                AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
+                            }
                         }
                     }
                     catch(JSONException e2) {
@@ -361,8 +360,9 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
             else {
                 // On va chercher la liste des inscriptions de la personne.
                 String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIParticipant +
-                        "/participant/obtenir_liste_inscriptions?email=" + email + "&mdp=" + mdp +
-                        "&inclurePartiesPassees=0&inclurePartiesAnimateur=1";
+                        "/participant/obtenir_liste_inscriptions?email=" + AccueilActivity.encoderECommercial(email) +
+                        "&mdp=" + AccueilActivity.encoderECommercial(mdp) +
+                        "&inclurePartiesPassees=0&inclurePartiesAnimateur=1&inclurePartiesAnimeesDansPasse=0";
                 RequeteHTTP requeteHTTP = new RequeteHTTP(getApplicationContext(),
                         adresse, RecherchePartieActivity.this);
                 requeteHTTP.traiterRequeteHTTPJSONArray(RecherchePartieActivity.this, "RechercheListeInscriptions", "GET", getSupportFragmentManager());
@@ -437,8 +437,9 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
                     String mdp = sharedPref.getString("mdpUtilisateur", "");
 
                     String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIParticipant +
-                            "/participant/rechercher_partie?email=" + email + "&mdp=" +
-                            mdp + "&typeRecherche=" + typeRecherche + "&recherche=" + editSaisirRecherche.getText().toString().trim() +
+                            "/participant/rechercher_partie?email=" + AccueilActivity.encoderECommercial(email) + "&mdp=" +
+                            AccueilActivity.encoderECommercial(mdp) + "&typeRecherche=" + typeRecherche +
+                            "&recherche=" + AccueilActivity.encoderECommercial(editSaisirRecherche.getText().toString().trim()) +
                             "&inclurePartiesPassees=0";
                     RequeteHTTP requeteHTTP = new RequeteHTTP(getApplicationContext(),
                             adresse, RecherchePartieActivity.this);

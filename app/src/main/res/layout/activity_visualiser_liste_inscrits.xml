@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activites.MesInscriptionsActivity">
-
+    tools:context=".activites.VisualiserListeInscritsActivity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,40 +18,15 @@
             android:src="@drawable/logo_secondaire">
         </ImageView>
         <TextView
-            android:id="@+id/mes_inscriptions_lbl"
+            android:id="@+id/visu_liste_inscrits_lbl_titre"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Mes inscriptions"
+            android:text="Visualisation de la liste des inscrits"
             android:textColor="@color/vert"
             android:textSize="@dimen/text_size"></TextView>
-        <HorizontalScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <RadioGroup
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <RadioButton
-                    android:id="@+id/mes_inscriptions_rb_parties_a_venir"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/texte_parties_a_venir"
-                    android:checked="true"></RadioButton>
-                <RadioButton
-                    android:id="@+id/mes_inscriptions_rb_parties_a_venir_ou_animees"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/texte_parties_a_venir_ou_animees"></RadioButton>
-                <RadioButton
-                    android:id="@+id/mes_inscriptions_rb_toutes_les_parties"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/texte_toutes_les_parties"></RadioButton>
-            </RadioGroup>
-        </HorizontalScrollView>
         <LinearLayout
-            android:id="@+id/mes_inscriptions_layout_attente"
+            android:id="@+id/visu_liste_inscrits_layout_attente"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1">
@@ -61,30 +35,60 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center|center_horizontal"
                 android:gravity="center"
-                android:text="Chargement des inscriptions en cours..."
+                android:text="Chargement des inscrits en cours..."
                 android:textSize="@dimen/text_size"></TextView>
         </LinearLayout>
         <ListView
-            android:id="@+id/mes_inscriptions_scroll_parties"
+            android:id="@+id/visu_liste_inscrits_scroll_inscrits"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:visibility="gone"></ListView>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="4"
-            android:gravity="center">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_marginRight="50px">
 
             <Button
-                android:id="@+id/mes_inscriptions_btn_retour"
+                android:id="@+id/visu_liste_inscrits_btn_retour"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/texte_retour"
+                android:layout_gravity="right"
+                android:layout_marginBottom="18dp"
                 android:backgroundTint="@color/violet"
                 android:textColor="@color/vert"
-                android:textSize="@dimen/text_size"></Button>
+                android:text="@string/texte_retour"
+                android:textSize="@dimen/text_size"/>
+
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_marginLeft="50px">
+
+            <Button
+                android:id="@+id/visu_liste_inscrits_btn_valider"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:backgroundTint="@color/violet"
+                android:textColor="@color/vert"
+                android:text="@string/texte_valider"
+                android:textSize="@dimen/text_size"/>
+
+        </LinearLayout>
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

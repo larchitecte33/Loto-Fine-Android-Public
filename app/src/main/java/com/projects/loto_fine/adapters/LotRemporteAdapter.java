@@ -1,8 +1,7 @@
-package com.projects.loto_fine;
+package com.projects.loto_fine.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +13,11 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.projects.loto_fine.R;
 import com.projects.loto_fine.activites.ChoixLieuRetraitActivity;
 import com.projects.loto_fine.activites.MesLotsActivity;
-import com.projects.loto_fine.activites.VisualiserListeLotsActivity;
 import com.projects.loto_fine.classes_metier.Lot;
-import com.projects.loto_fine.classes_metier.OuiNonDialogFragment;
-import com.projects.loto_fine.classes_metier.Partie;
+import com.projects.loto_fine.classes_utilitaires.OuiNonDialogFragment;
 
 import java.util.HashMap;
 import java.util.LinkedList;

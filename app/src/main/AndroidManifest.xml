@@ -13,7 +13,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LotFine"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activites.FeedBackActivity"></activity>
+        <activity android:name=".activites.DescriptionMethodeReglementActivity"></activity>
+        <activity android:name=".activites.VisualiserListeInscritsActivity" />
+        <activity android:name=".activites.ClassementsActivity" />
+        <activity android:name=".activites.StatistiquesActivity" />
+        <activity android:name=".activites.FeedBackActivity" />
         <activity android:name=".activites.SuppressionCompteActivity" />
         <activity android:name=".activites.ChoixLieuRetraitActivity" />
         <activity android:name=".activites.MesLotsActivity" />

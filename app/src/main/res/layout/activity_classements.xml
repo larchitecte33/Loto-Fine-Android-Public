@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activites.ClassementsActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+        <ImageView
+            android:id="@+id/header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/logo_secondaire">
+        </ImageView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/vert"
+            android:text="@string/subtitle_classements"
+            android:textSize="@dimen/text_size"></TextView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10px"
+                android:layout_weight="@dimen/weight_textview_creation_compte"
+                android:text="@string/lbl_date_debut"
+                android:textSize="@dimen/text_size"></TextView>
+
+            <EditText
+                android:id="@+id/classements_edit_date_debut"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10px"
+                android:layout_weight="@dimen/weight_edit_creation_compte"
+                android:background="@drawable/backwithborder"
+                android:ellipsize="start"
+                android:gravity="center_horizontal"
+                android:hint="@string/hint_choisir_date_debut"
+                android:textSize="@dimen/text_size"></EditText>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="6px">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10px"
+                android:layout_weight="@dimen/weight_textview_creation_compte"
+                android:text="@string/lbl_date_fin"
+                android:textSize="@dimen/text_size"></TextView>
+
+            <EditText
+                android:id="@+id/classements_edit_date_fin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10px"
+                android:layout_weight="@dimen/weight_edit_creation_compte"
+                android:background="@drawable/backwithborder"
+                android:ellipsize="start"
+                android:gravity="center_horizontal"
+                android:hint="@string/hint_choisir_date_fin"
+                android:textSize="@dimen/text_size"></EditText>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="6px">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10px"
+                android:layout_weight="@dimen/weight_textview_creation_compte"
+                android:text="@string/lbl_critere"
+                android:textSize="@dimen/text_size"></TextView>
+
+            <Spinner
+                android:id="@+id/classements_spin_critere"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10px"
+                android:layout_weight="@dimen/weight_edit_creation_compte"
+                android:entries="@array/select_critere_classement"></Spinner>
+        </LinearLayout>
+        <ListView
+            android:id="@+id/classements_scroll_participants"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+        </ListView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/bouton_annuler_visualisation_classements"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/texte_annuler"
+                android:backgroundTint="@color/violet"
+                android:textColor="@color/vert"
+                android:textSize="@dimen/text_size"></Button>
+
+            <Button
+                android:id="@+id/bouton_valider_visualisation_classements"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="40px"
+                android:text="@string/texte_valider"
+                android:backgroundTint="@color/violet"
+                android:textColor="@color/vert"
+                android:textSize="@dimen/text_size"></Button>
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

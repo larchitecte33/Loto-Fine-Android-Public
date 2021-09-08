@@ -7,13 +7,8 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Parcelable;
 import android.os.Parcel;
-import android.util.Log;
 
-import androidx.core.app.ActivityCompat;
-
-import com.projects.loto_fine.Constants;
-
-import java.util.Random;
+import com.projects.loto_fine.constantes.Constants;
 
 /**
  * Classe qui représente une case d'un carton de quine

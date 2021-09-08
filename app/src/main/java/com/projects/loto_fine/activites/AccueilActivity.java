@@ -3,12 +3,10 @@ package com.projects.loto_fine.activites;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.os.Bundle;
 
 import com.projects.loto_fine.R;
-import com.projects.loto_fine.classes_metier.ValidationDialogFragment;
-import com.projects.loto_fine.stomp_client.ClientStomp;
+import com.projects.loto_fine.classes_utilitaires.ValidationDialogFragment;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -18,7 +16,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -106,6 +103,11 @@ public class AccueilActivity extends AppCompatActivity implements ValidationDial
         }
     }
 
+    public static String encoderECommercial(String chaineATraiter) {
+        String chaineRetour = chaineATraiter.replace("&", "%26");
+        return chaineRetour;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,6 +125,8 @@ public class AccueilActivity extends AppCompatActivity implements ValidationDial
         Button btnRechercherPartie = (Button)findViewById(R.id.bouton_rechercher_partie);
         Button btnCreerPartie = (Button)findViewById(R.id.bouton_creer_partie);
         Button btnMesLots = (Button)findViewById(R.id.bouton_mes_lots);
+        Button btnStatistiques = (Button)findViewById(R.id.bouton_statistiques);
+        Button btnClassements = (Button)findViewById(R.id.bouton_classements);
         Button btnFeedback = (Button)findViewById(R.id.bouton_feedback);
         TextView tvEtatConnection = (TextView)findViewById(R.id.text_connection);
 
@@ -145,6 +149,10 @@ public class AccueilActivity extends AppCompatActivity implements ValidationDial
         btnCreerPartie.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.vert));
         btnMesLots.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.violet));
         btnMesLots.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.vert));
+        btnStatistiques.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.violet));
+        btnStatistiques.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.vert));
+        btnClassements.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.violet));
+        btnClassements.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.vert));
         btnFeedback.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.violet));
         btnFeedback.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.vert));
 
@@ -182,12 +190,15 @@ public class AccueilActivity extends AppCompatActivity implements ValidationDial
         if(nomUtilisateur.equals("anonymous")) {
             tvEtatConnection.setText("Non connecté");
             btnMeConnecter.setText(R.string.texte_me_connecter);
+            btnMInscrire.setText(R.string.texte_minscrire);
 
             utilisateurEstConnecte = false;
         }
         else {
             tvEtatConnection.setText("Connecté en tant que " + nomUtilisateur);
             btnMeConnecter.setText(R.string.texte_me_deconnecter);
+            btnMInscrire.setText(R.string.texte_modifier_compte);
+
             utilisateurEstConnecte = true;
         }
 
@@ -255,6 +266,7 @@ public class AccueilActivity extends AppCompatActivity implements ValidationDial
                     edit.commit();
 
                     btnMeConnecter.setText(R.string.texte_me_connecter);
+                    btnMInscrire.setText(R.string.texte_minscrire);
                     tvEtatConnection.setText("Non connecté");
                 }
             }
@@ -302,6 +314,32 @@ public class AccueilActivity extends AppCompatActivity implements ValidationDial
                 }
                 else {
                     Intent intent = new Intent(getApplicationContext(), MesLotsActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+
+        btnStatistiques.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(nomUtilisateur.equals("anonymous")) {
+                    afficherMessage("Vous devez être connecté pour effectuer cette action.", false, getSupportFragmentManager());
+                }
+                else {
+                    Intent intent = new Intent(getApplicationContext(), StatistiquesActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+
+        btnClassements.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(nomUtilisateur.equals("anonymous")) {
+                    afficherMessage("Vous devez être connecté pour effectuer cette action.", false, getSupportFragmentManager());
+                }
+                else {
+                    Intent intent = new Intent(getApplicationContext(), ClassementsActivity.class);
                     startActivity(intent);
                 }
             }
