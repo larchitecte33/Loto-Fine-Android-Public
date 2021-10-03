@@ -20,7 +20,5 @@ Grâce à cette application, il est possible de :
   - Visualiser des statistiques concernant l'utilisation de l'application (nombre de lots gagnés, nombre de participations, nombre moyen de cartons)
   - Visualiser le classement des participants selon les trois critères suivants (nombre de lots gagnés, nombre de participations, nombre moyen de cartons)
   - Répondre à un questionnaire permettant d'envoyer un feedback à l'administrateur de l'application.
-<<<<<<< HEAD
+
 Vidéo de présentation disponible à l'adresse suivante : https://www.youtube.com/watch?v=nTckRDnK50E.
-=======
->>>>>>> 638bb58c8bcabde8c2d12b7e112e8eac1a8b9147
