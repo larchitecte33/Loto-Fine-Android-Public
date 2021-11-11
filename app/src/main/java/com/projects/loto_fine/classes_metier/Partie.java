@@ -5,16 +5,21 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Classe qui représente une partie de loto.
+ * Cette classe fait partie du modèle.
+ */
 public class Partie {
-    private int id;
-    private Date date; // LocalDateTime
-    private String adresse;
-    private String ville;
-    private String cp;
-    private ArrayList<Lot> lots;
-    private double prixCarton;
-    private Personne animateur;
+    private int id; // Identifiant de la partie
+    private Date date; // Date de la partie
+    private String adresse; // Adresse de la partie
+    private String ville; // Ville dans laquelle est organisée la partie (utile pour la définition du lieu de retrait par défaut).
+    private String cp; // Code postal de la ville dans laquelle est organisée la partie.
+    private ArrayList<Lot> lots; // Lots mis en jeu dans la partie.
+    private double prixCarton; // Prix du carton
+    private Personne animateur; // Animateur de la partie
 
+    // Constructeur
     public Partie(int id, Date date, String adresse, String ville, String cp, ArrayList<Lot> lots, double prixCarton, Personne animateur) { // LocalDateTime
         this.id = id;
         this.date = date;
@@ -26,6 +31,7 @@ public class Partie {
         this.animateur = animateur;
     }
 
+    // Accesseurs
     public int getId() {
         return id;
     }

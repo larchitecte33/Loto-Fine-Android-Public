@@ -24,8 +24,29 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+/**
+ * Cette activité est celle qui est affichée lors du lancement de l'application.
+ * Elle permet d'accéder aux fonctionnalités suivantes :
+ *  - Inscription / Modification compte
+ *  - Désinscription
+ *  - Connexion / Déconnexion
+ *  - Recherche de paries
+ *  - Création d'une partie
+ *  - Visualisation des inscriptions
+ *  - Visualisation des lots
+ *  - Visualisation des statistiques
+ *  - Visualisation des classements
+ *  - Envoi du feedback
+ *  - Visualisation et modification des paramètres
+ */
 public class AccueilActivity extends AppCompatActivity implements ValidationDialogFragment.ValidationDialogListener {
 
+    /**
+     * Fonction permettant d'afficher un message à l'utilisateur.
+     * @param message : message à afficher
+     * @param quitter : true si on doit quitter l'activité actuelle après avoir fermé le message, false sinon
+     * @param fragmentManager : fragmentManager s'occupant de l'affichage du message.
+     */
     public static void afficherMessage(String message, boolean quitter, FragmentManager fragmentManager) {
         try {
             final ValidationDialogFragment fmdf = new ValidationDialogFragment(message, quitter);
@@ -36,6 +57,12 @@ public class AccueilActivity extends AppCompatActivity implements ValidationDial
         }
     }
 
+    /**
+     * Fonction permettant d'encoder une URL
+     * @param urlAEncoder : URL à encoder
+     * @param supportFragmentManager : fragmentManager permettant d'afficher les messages d'erreur
+     * @return l'URL encodé si elle a pu l'être, l'URL non encodée sinon.
+     */
     public static String encoderURL(String urlAEncoder, FragmentManager supportFragmentManager) {
         try {
             URL url = new URL(urlAEncoder);
@@ -103,19 +130,28 @@ public class AccueilActivity extends AppCompatActivity implements ValidationDial
         }
     }
 
+    /**
+     * Fonction permettant d'encoder le & par son code hexadécimal.
+     * @param chaineATraiter : chaine dans laquelle rechercher les &
+     * @return la chaine avec tous les & encodés.
+     */
     public static String encoderECommercial(String chaineATraiter) {
         String chaineRetour = chaineATraiter.replace("&", "%26");
         return chaineRetour;
     }
 
+    /**
+     * Fonction appelée quand l'activité est lancée.
+     * @param savedInstanceState : si l'activité est réinitialisée après avoir été fermée, ce Bundle contient les données
+     *                             qu'il a le plus récemment fournies.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_accueil);
-        /*Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);*/
 
+        // Récupération des composants
         Button btnQuitter = (Button)findViewById(R.id.bouton_quitter);
         Button btnMesInscriptions = (Button)findViewById(R.id.bouton_mes_inscriptions);
         Button btnMInscrire = (Button)findViewById(R.id.bouton_minscrire);
@@ -157,66 +193,42 @@ public class AccueilActivity extends AppCompatActivity implements ValidationDial
         btnFeedback.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.vert));
 
 
-        /*if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) {
-            Toast.makeText(getApplicationContext(), "La taille de l'écran est LARGE.", 5).show();
-        }
-        else if((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL) {
-            Toast.makeText(getApplicationContext(), "La taille de l'écran est SMALL.", 5).show();
-        }
-        else if((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL) {
-            Toast.makeText(getApplicationContext(), "La taille de l'écran est NORMAL.", 5).show();
-        }
-        else if((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_UNDEFINED) {
-            Toast.makeText(getApplicationContext(), "La taille de l'écran est UNDEFINED.", 5).show();
-        }
-        else if((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE) {
-            Toast.makeText(getApplicationContext(), "La taille de l'écran est LARGE.", 5).show();
-        }*/
-
-
         SharedPreferences sharedPref = getSharedPreferences("MyData", Context.MODE_PRIVATE);
+        // On récupère le nom et l'e-mail de l'utilisateur dans les SharedPreferences.
         String nomUtilisateur = sharedPref.getString("nomUtilisateur", "anonymous");
         String emailUtilisateur = sharedPref.getString("emailUtilisateur", "");
 
-        /*SharedPreferences.Editor edit = sharedPref.edit();
-        edit.clear();
-
-        String adresseServeur = sharedPref.getString("AdresseServeur", "http://localhost:8081");
-        edit.putString("AdresseServeur", "http://192.168.1.17:8081");
-        edit.apply();*/
-
-        final boolean utilisateurEstConnecte;
-
+        // Si le nom d'utilisateur est anonymous, l'utilisateur est considéré comme étant non connecté.
         if(nomUtilisateur.equals("anonymous")) {
             tvEtatConnection.setText("Non connecté");
             btnMeConnecter.setText(R.string.texte_me_connecter);
             btnMInscrire.setText(R.string.texte_minscrire);
-
-            utilisateurEstConnecte = false;
         }
+        // Sinon, l'utilisateur est connecté.
         else {
             tvEtatConnection.setText("Connecté en tant que " + nomUtilisateur);
             btnMeConnecter.setText(R.string.texte_me_deconnecter);
             btnMInscrire.setText(R.string.texte_modifier_compte);
-
-            utilisateurEstConnecte = true;
         }
 
+        // Clic sur le bouton "QUITTER".
         btnQuitter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //finish();
                 finishAffinity();
                 System.exit(0);
             }
         });
 
+        // Clic sur le bouton "MES INSCRIPTIONS"
         btnMesInscriptions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Si l'utilisateur n'est pas connecté
                 if(nomUtilisateur.equals("anonymous")) {
                     afficherMessage("Vous devez être connecté pour effectuer cette action.", false, getSupportFragmentManager());
                 }
+                // Si l'utilisateur est connecté
                 else {
                     Intent intent;
                     intent = new Intent(getApplicationContext(), MesInscriptionsActivity.class);
@@ -226,6 +238,7 @@ public class AccueilActivity extends AppCompatActivity implements ValidationDial
             }
         });
 
+        // Clic sur le bouton "M'INSCRIRE"
         btnMInscrire.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -234,12 +247,15 @@ public class AccueilActivity extends AppCompatActivity implements ValidationDial
             }
         });
 
+        // Clic sur le bouton "ME DÉSINSCRIRE"
         btnMeDesinscrire.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Si l'utilisateur n'est pas connecté
                 if(nomUtilisateur.equals("anonymous")) {
                     afficherMessage("Vous devez être connecté pour effectuer cette action.", false, getSupportFragmentManager());
                 }
+                // Si l'utilisateur est connecté
                 else {
                     Intent intent = new Intent(getApplicationContext(), SuppressionCompteActivity.class);
                     startActivity(intent);
@@ -247,6 +263,7 @@ public class AccueilActivity extends AppCompatActivity implements ValidationDial
             }
         });
 
+        // Clis sur le bouton "ME CONNECTER"
         btnMeConnecter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -260,7 +277,7 @@ public class AccueilActivity extends AppCompatActivity implements ValidationDial
                 // Si l'utilisateur est connecté, on va le déconnecter.
                 else {
                     SharedPreferences.Editor edit = sharedPref.edit();
-                    //edit.clear();
+                    // On affecte à la sharedPreference nomUtilisateur la valeur anonymous (utilisateur non connecté).
                     edit.putString("nomUtilisateur", "anonymous");
                     edit.putString("emailUtilisateur", "");
                     edit.commit();
@@ -272,6 +289,7 @@ public class AccueilActivity extends AppCompatActivity implements ValidationDial
             }
         });
 
+        // Clic sur le bouton "RECHERCHER UNE PARTIE À VENIR"
         btnRechercherPartie.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -285,6 +303,7 @@ public class AccueilActivity extends AppCompatActivity implements ValidationDial
             }
         });
 
+        // Clic sur le bouton "CRÉER UNE PARTIE"
         btnCreerPartie.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -298,6 +317,7 @@ public class AccueilActivity extends AppCompatActivity implements ValidationDial
             }
         });
 
+        // Clic sur le bouton "PARAMÈTRES"
         btnParametres.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -306,6 +326,7 @@ public class AccueilActivity extends AppCompatActivity implements ValidationDial
             }
         });
 
+        // Clic sur le bouton "MES LOTS"
         btnMesLots.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -319,6 +340,7 @@ public class AccueilActivity extends AppCompatActivity implements ValidationDial
             }
         });
 
+        // Clic sur le bouton "STATISTIQUES"
         btnStatistiques.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -332,6 +354,7 @@ public class AccueilActivity extends AppCompatActivity implements ValidationDial
             }
         });
 
+        // Clic sur le bouton "CLASSEMENTS"
         btnClassements.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -345,6 +368,7 @@ public class AccueilActivity extends AppCompatActivity implements ValidationDial
             }
         });
 
+        // Clic sur le bouton "FEEDBACK"
         btnFeedback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -359,6 +383,10 @@ public class AccueilActivity extends AppCompatActivity implements ValidationDial
         });
     }
 
+    /**
+     * Implémentation de la fonction onFinishEditDialog de l'interface ValidationDialogListener.
+     * @param revenirAAccueil : true si on doit revenir à l'activité appelante, false sinon.
+     */
     @Override
     public void onFinishEditDialog(boolean revenirAAccueil) {
         if (revenirAAccueil) {

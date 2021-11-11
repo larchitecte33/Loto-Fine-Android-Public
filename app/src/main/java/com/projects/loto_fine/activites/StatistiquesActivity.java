@@ -27,27 +27,41 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * Cette activité est affichée lors du clic sur le bouton STATISTIQUES de l'activité AccueilActivity.
+ * Elle permet à l'utilisateur de visualiser des statistiques le concernant.
+ */
 public class StatistiquesActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, ValidationDialogFragment.ValidationDialogListener {
 
-    private String nameFieldDateSet = "";
-    private EditText edDateDebut, edDateFin;
+    private String nameFieldDateSet = ""; // Nom du champ date qui est modifié.
+    private EditText edDateDebut, edDateFin; // EditText permettant de modifier la date de début et la date de fin.
     private int annee, mois, jour;
     private SharedPreferences sharedPref;
     private String adresseServeur;
     private TextView tvNbLotsGagnges, tvNbParticipations, tvNbMoyenCartons;
 
+    /**
+     * Fonction qui traite les réponses aux requêtes HTTP.
+     * Réponses traitées : obtentionInfosPersonne et recuperationStatistiques.
+     * @param source : action ayant exécutée la requête.
+     * @param reponse : reponse à la requête.
+     * @param isErreur : y a-t-il eu une erreur lors de l'envoi de la requête.
+     */
     public void TraiterReponse(String source, String reponse, boolean isErreur) {
         String message;
 
         if (source == "obtentionInfosPersonne") {
+            // S'il y a une erreur lors de la recherche des informations de la personne, on l'affiche.
             if(isErreur) {
                 AccueilActivity.afficherMessage("Erreur lors de la recherche des informations de l'utilisateur : " + reponse, false, getSupportFragmentManager());
             }
             else {
                 try {
+                    // On tente de caster la réponse en JSONObject.
                     JSONObject jo = new JSONObject(reponse);
                     Object objErreur = jo.opt("erreur");
 
+                    // Si on a une erreur, on l'affiche.
                     if (objErreur != null) {
                         message = (String) objErreur;
                         AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
@@ -62,10 +76,13 @@ public class StatistiquesActivity extends AppCompatActivity implements DatePicke
                             dateFin = sdf.parse(edDateFin.getText().toString());
                             dateFinLong = dateFin.getTime();
 
+                            // Récupération de l'email et du mot de passe de l'utilisateur dans les SharedPreferences.
                             String email = sharedPref.getString("emailUtilisateur", "");
                             String mdp = sharedPref.getString("mdpUtilisateur", "");
+
                             int idPersonne = jo.getInt("id");
 
+                            // Envoi d'une requête permettant de récupérer les statistiques.
                             String adresse = adresseServeur + ":" + Constants.portMicroserviceStatistiquesEtClassements +
                                     "/statistiques-classements/recuperation-statistiques?email=" + email + "&mdp=" + mdp + "&dateDebut=" + dateDebutLong +
                                     "&dateFin=" + dateFinLong + "&idPersonne=" + idPersonne;
@@ -85,16 +102,20 @@ public class StatistiquesActivity extends AppCompatActivity implements DatePicke
             }
         }
         else if (source == "recuperationStatistiques") {
+            // S'il y a une erreur lors de la récupération des statistiques, on l'affiche.
             if(isErreur) {
                 AccueilActivity.afficherMessage("Erreur lors de la recherche des statistiques : " + reponse, false, getSupportFragmentManager());
             }
             else {
                 try {
+                    // On tente de caster la réponse du serveur en JSONArray.
                     JSONArray ja = new JSONArray(reponse);
 
+                    // Si on a aucun enregistrement dans le JSONArray, on affiche une erreur.
                     if (ja.length() == 0) {
                         AccueilActivity.afficherMessage("Erreur lors de la recherche des statistiques : aucune statistique renvoyée par le serveur", false, getSupportFragmentManager());
                     } else {
+                        // Sinon, on va chercher le premier enregistrement du JSONArray.
                         JSONObject jo = ja.getJSONObject(0);
 
                         if (jo.opt("erreur") != null) {
@@ -126,6 +147,7 @@ public class StatistiquesActivity extends AppCompatActivity implements DatePicke
         sharedPref = getSharedPreferences("MyData", Context.MODE_PRIVATE);
         adresseServeur = sharedPref.getString("AdresseServeur", "");
 
+        // Récupération des composants.
         edDateDebut = findViewById(R.id.visu_stats_edit_date_debut);
         edDateFin = findViewById(R.id.visu_stats_edit_date_fin);
         tvNbLotsGagnges = findViewById(R.id.visu_stats_lbl_nb_lots_gagnes);
@@ -134,9 +156,11 @@ public class StatistiquesActivity extends AppCompatActivity implements DatePicke
         Button btValiderVisuStats = findViewById(R.id.bouton_valider_visualisation_statistiques);
         Button btAnnulerVisuStats = findViewById(R.id.bouton_annuler_visualisation_statistiques);
 
+        // Clic sur l'EditText de la date de début.
         edDateDebut.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
+                // Si l'EditText de la date de début a le focus, alors on affiche un calendrier permettant de sélectionner la date.
                 if(hasFocus) {
                     Calendar calendar = Calendar.getInstance();
                     annee = calendar.get(Calendar.YEAR);
@@ -149,9 +173,11 @@ public class StatistiquesActivity extends AppCompatActivity implements DatePicke
             }
         });
 
+        // Clic sur l'EditText de la date de fin.
         edDateFin.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
+                // Si l'EditText de la date de fin a le focus, alors on affiche un calendrier permettant de sélectionner la date.
                 if(hasFocus) {
                     Calendar calendar = Calendar.getInstance();
                     annee = calendar.get(Calendar.YEAR);
@@ -164,6 +190,7 @@ public class StatistiquesActivity extends AppCompatActivity implements DatePicke
             }
         });
 
+        // Clic sur le bouton Annuler
         btAnnulerVisuStats.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -172,11 +199,13 @@ public class StatistiquesActivity extends AppCompatActivity implements DatePicke
             }
         });
 
+        // Clic sur le bouton Valider.
         btValiderVisuStats.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // On va chercher l'email et le mot de passe de l'utilisateur dans les SharedPreferences.
+                // On va chercher l'email de l'utilisateur dans les SharedPreferences.
                 String email = sharedPref.getString("emailUtilisateur", "");
+                // On envoie une requête permettant de récupérer les informations de la personne.
                 String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIParticipant + "/participant/get_infos_personne?email=" + email;
 
                 RequeteHTTP requeteHTTP = new RequeteHTTP(getApplicationContext(),
@@ -186,6 +215,13 @@ public class StatistiquesActivity extends AppCompatActivity implements DatePicke
         });
     }
 
+    /**
+     * Déclenché quand une date est sélectionnée sur un DatePickerDialog.
+     * @param view : le picker associé au dialog
+     * @param year : l'année sélectionnée
+     * @param month : le mois sélectionné
+     * @param dayOfMonth : le jour sélectionné
+     */
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
         if(nameFieldDateSet.equals("edDateDebut")) {
@@ -200,6 +236,10 @@ public class StatistiquesActivity extends AppCompatActivity implements DatePicke
         }
     }
 
+    /**
+     * Implémentation de la fonction onFinishEditDialog de l'interface ValidationDialogListener.
+     * @param revenirAAccueil : true si on doit revenir à l'activité appelante, false sinon.
+     */
     @Override
     public void onFinishEditDialog(boolean revenirAAccueil) {
         if(revenirAAccueil) {

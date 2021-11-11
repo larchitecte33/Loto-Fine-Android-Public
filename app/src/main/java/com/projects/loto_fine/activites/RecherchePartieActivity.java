@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.projects.loto_fine.classes_metier.Inscription;
 import com.projects.loto_fine.constantes.Constants;
 import com.projects.loto_fine.adapters.PartieAdapter;
 import com.projects.loto_fine.R;
@@ -36,33 +37,45 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 
+/**
+ * Cette activité est affichée lors du clic sur le bouton RECHERCHER UNE PARTIE A VENIR de l'activité AccueilActivity.
+ * Elle permet à l'utilisateur de rechercher une partie à venir.
+ */
 public class RecherchePartieActivity extends AppCompatActivity implements ValidationDialogFragment.ValidationDialogListener {
+    // Constantes
+    private static final int RECHERCHE_PAR_VILLE = 1;
+    private static final int RECHERCHE_PAR_DEPARTEMENT = 2;
+    private static final int RECHERCHE_PAR_REGION = 3;
 
-    private static int RECHERCHE_PAR_VILLE = 1;
-    private static int RECHERCHE_PAR_DEPARTEMENT = 2;
-    private static int RECHERCHE_PAR_REGION = 3;
+    // Type de recherche. Par défaut, c'est la recherche par ville.
     private int typeRecherche = RECHERCHE_PAR_VILLE;
-    private RelativeLayout layoutListeParties;
-    private ListView listParties;
-    private ArrayList<Integer> idInscriptions = new ArrayList<>();
-    private LinkedList<Partie> parties = new LinkedList<Partie>();
-    private ArrayList<Boolean> validationInscription = new ArrayList<Boolean>();
-    private LinearLayout layoutAttente;
-    private TextView tvAttente;
+    private ListView listParties; // ListView affichant la liste des parties.
+    private LinkedList<Partie> parties = new LinkedList<Partie>(); // Liste des parties.
+    private ArrayList<Inscription> inscriptions = new ArrayList<>(); // Liste des inscriptions.
+    private LinearLayout layoutAttente; // Layout contenant un message d'attente.
+    private TextView tvAttente; // TextView affichant un message d'attente.
+    private String recherche = ""; // Chaine de caractères contenant la recherche saisie par l'utilisateur.
 
+    /**
+     * Fonction qui traite les réponses aux requêtes HTTP.
+     * Réponses traitées : recherchePartie, inscriptionPartie, rechercheListeInscriptions, desinscriptionPartie et suppressionPartie.
+     * @param source : action ayant exécutée la requête.
+     * @param reponse : reponse à la requête.
+     * @param isErreur : y a-t-il eu une erreur lors de l'envoi de la requête.
+     */
     public void TraiterReponse(String source, String reponse, boolean isErreur) {
         String message;
-        //ValidationDialogFragment vdf = null;
-        JSONObject jo = null;
+        JSONObject jo = null, joPartie;
         JSONArray ja = null;
 
         if (source == "recherchePartie") {
             parties.clear();
-            validationInscription.clear();
 
+            // On masque le layout d'attente et on affiche la liste des parties.
             layoutAttente.setVisibility(View.GONE);
             listParties.setVisibility(View.VISIBLE);
 
+            // S'il y a eu une erreur lors de la recherche de la partie, on l'affiche.
             if (isErreur) {
                 message = "Une erreur est survenue : ";
                 AccueilActivity.afficherMessage(message + reponse, false, getSupportFragmentManager());
@@ -85,21 +98,16 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
                     JSONObject joLots;
                     JSONObject joAnimateur;
 
-                    LinearLayout[] parent = new LinearLayout[5];
-                    TextView[] tv = new TextView[5];
-                    TextView[] tv2 = new TextView[5];
-
                     System.out.println("ja.toString() = " + ja.toString());
 
                     // On parcourt chaque partie trouvée dans le JSON.
                     for (int i = 0; i < ja.length(); i++) {
                         jo = ja.getJSONObject(i);
-                        validationInscription.add(jo.getBoolean("isReglee")); //
-                        jo = jo.getJSONObject("partie");
+                        joPartie = jo.getJSONObject("partie");
 
                         isExceptionDateHeurePartie = false;
 
-                        dateHeurePartieStr = jo.getString("date");
+                        dateHeurePartieStr = joPartie.getString("date");
 
                         try {
                             dateHeurePartie = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(dateHeurePartieStr);
@@ -110,14 +118,15 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
                         // Si la date/heure de début de la partie est correcte.
                         if (!isExceptionDateHeurePartie) {
                             // On extrait tous les éléments dont on a besoin.
-                            idPartie = jo.getInt("id");
-                            cp = jo.getString("cp");
-                            ville = jo.getString("ville");
-                            adresse = jo.getString("adresse");
-                            prixCarton = jo.getDouble("prixCarton");
+                            idPartie = joPartie.getInt("id");
+                            cp = joPartie.getString("cp");
+                            ville = joPartie.getString("ville");
+                            adresse = joPartie.getString("adresse");
+                            prixCarton = joPartie.getDouble("prixCarton");
 
-                            joAnimateur = jo.getJSONObject("animateur");
+                            joAnimateur = joPartie.getJSONObject("animateur");
                             animateur = new Personne();
+                            // On remplit les attributs de l'animateur.
                             animateur.setId(joAnimateur.getInt("id"));
                             animateur.setNom(joAnimateur.getString("nom"));
                             animateur.setPrenom(joAnimateur.getString("prenom"));
@@ -128,28 +137,30 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
                             animateur.setNumtel(joAnimateur.getString("numTel"));
                             animateur.setMdp(joAnimateur.getString("mdp"));
 
-                            jaLots = jo.getJSONArray("lots");
+                            jaLots = joPartie.getJSONArray("lots");
                             lots = new ArrayList<>();
 
                             // On parcourt tous les lots.
                             for (int j = 0; j < jaLots.length(); j++) {
                                 joLots = jaLots.getJSONObject(j);
 
+                                // On construit un lot et on lui affecte les valeurs du JSONObject.
                                 Lot lot = new Lot();
                                 lot.setId(joLots.getInt("id"));
                                 lot.setNom(joLots.getString("nom"));
                                 lot.setValeur((float)joLots.getDouble("valeur"));
 
+                                // On ajoute le lot à la liste des lots.
                                 lots.add(lot);
                             }
-                            
-                            parties.add(new Partie(idPartie, dateHeurePartie, // Instant.ofEpochMilli(dateHeurePartie.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime(),
-                                    adresse, ville, cp, lots, prixCarton, animateur));
+
+                            // On crée un objet Partie et on l'ajoute à la liste des parties.
+                            parties.add(new Partie(idPartie, dateHeurePartie, adresse, ville, cp, lots, prixCarton, animateur));
                         }
                     }
 
                     PartieAdapter adapter = new PartieAdapter(this, this, R.layout.activity_recherche_partie_adapter,
-                            parties, idInscriptions, validationInscription, getSupportFragmentManager());
+                            parties, inscriptions, typeRecherche, recherche, getSupportFragmentManager());
                     listParties.setAdapter(adapter);
                 }
                 catch(JSONException e) {
@@ -175,11 +186,13 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
             }
         }
         else if(source == "inscriptionPartie") {
+            // S'il y a eu une erreur lors de l'inscription à la partie, on l'affiche.
             if (isErreur) {
                 message = "Une erreur est survenue : ";
                 AccueilActivity.afficherMessage(message + reponse, false, getSupportFragmentManager());
             } else {
                 try {
+                    // On tente de caster la réponse en JSONObject.
                     jo = new JSONObject(reponse);
 
                     Object objErreur = jo.opt("erreur");
@@ -192,8 +205,15 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
                         message = "Votre inscription a été prise en compte.";
                         AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
 
-                        idInscriptions.add(jo.getInt("idPartie"));
+                        // On crée un objet Inscription et on lui affecte les valeurs retournées par le serveur.
+                        Inscription inscription = new Inscription();
+                        inscription.setValidee(false);
+                        inscription.setIdPartie(jo.getInt("idPartie"));
+                        inscription.setMontant(jo.getDouble("montantInscription"));
+                        // On ajoute l'inscription à la liste des inscriptions.
+                        inscriptions.add(inscription);
 
+                        // On mes à jour la liste des parties.
                         ((PartieAdapter)listParties.getAdapter()).notifyDataSetChanged();
                     }
                 }
@@ -203,18 +223,27 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
             }
         }
         else if (source == "rechercheListeInscriptions") {
+            // S'il y a eu une erreur lors de la recherche de la liste des inscriptions, on l'affiche.
             if (isErreur) {
                 message = "Une erreur est survenue : ";
                 AccueilActivity.afficherMessage(message + reponse, false, getSupportFragmentManager());
             } else {
                 try {
+                    // On tente de caster la réponse en JSONArray.
                     ja = new JSONArray(reponse);
 
+                    // On parcourt chaque inscription contenue dans le JSONArray.
                     for(int i = 0 ; i < ja.length() ; i++) {
                         jo = ja.getJSONObject(i);
-                        jo = jo.getJSONObject("partie");
+                        joPartie = jo.getJSONObject("partie");
 
-                        idInscriptions.add(jo.getInt("id"));
+                        // On crée un objet Inscription et on lui affecte les valeurs contenues dans le JSON.
+                        Inscription inscription = new Inscription();
+                        inscription.setMontant(jo.getDouble("montantARegler"));
+                        inscription.setIdPartie(joPartie.getInt("id"));
+                        inscription.setValidee(jo.getBoolean("isReglee"));
+                        // On ajoute l'inscription à la liste des inscriptions.
+                        inscriptions.add(inscription);
                     }
                 }
                 catch(JSONException e) {
@@ -238,11 +267,13 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
             }
         }
         else if (source == "desinscriptionPartie") {
+            // S'il y a eu une erreur lors de la désinscription, on l'affiche.
             if (isErreur) {
                 message = "Une erreur est survenue : ";
                 AccueilActivity.afficherMessage(message + reponse, false, getSupportFragmentManager());
             } else {
                 try {
+                    // On tente de caster la réponse en JSONObject.
                     jo = new JSONObject(reponse);
                     Object objErreur = jo.opt("erreur");
 
@@ -254,10 +285,16 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
                         message = "La désinscription est réussie.";
                         AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
 
-                        if(idInscriptions.indexOf(jo.getInt("idPartie")) != -1) {
-                            idInscriptions.remove(idInscriptions.indexOf(jo.getInt("idPartie")));
-                            ((PartieAdapter)listParties.getAdapter()).notifyDataSetChanged();
+                        // On recherche la partie dans la liste des inscriptions
+                        for(int i = 0 ; i < inscriptions.size() ; i++) {
+                            // Si la partie est trouvée, on la supprime de la liste des inscriptions.
+                            if(inscriptions.get(i).getIdPartie() == jo.getInt("idPartie")) {
+                                inscriptions.remove(i);
+                            }
                         }
+
+                        // On notifie la liste des parties pour qu'elle se mette à jour.
+                        ((PartieAdapter)listParties.getAdapter()).notifyDataSetChanged();
                     }
                 }
                 catch(JSONException e) {
@@ -265,6 +302,7 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
                 }
             }
         }
+        // Suppression d'une partie
         else if(source == "suppressionPartie") {
             if (isErreur) {
                 message = "Une erreur est survenue : ";
@@ -281,16 +319,23 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
                     } else {
                         AccueilActivity.afficherMessage("La partie a été supprimée.", false, getSupportFragmentManager());
 
+                        // On recherche la partie dans la liste des parties
                         for(int i = 0 ; i < parties.size() ; i++) {
+                            // Si la partie est trouvée, on la supprime de la liste des parties
                             if(parties.get(i).getId() == jo.getInt("idPartie")) {
                                 parties.remove(i);
                             }
                         }
 
-                        if(idInscriptions.indexOf(jo.getInt("idPartie")) != -1) {
-                            idInscriptions.remove(idInscriptions.indexOf(jo.getInt("idPartie")));
+                        // On recherche la partie dans la liste des inscriptions
+                        for(int i = 0 ; i < inscriptions.size() ; i++) {
+                            // Si la partie est trouvée, on la supprime de la liste des inscriptions.
+                            if(inscriptions.get(i).getIdPartie() == jo.getInt("idPartie")) {
+                                inscriptions.remove(i);
+                            }
                         }
 
+                        // On notifie la liste des parties pour qu'elle se mette à jour.
                         ((PartieAdapter)listParties.getAdapter()).notifyDataSetChanged();
                     }
                 }
@@ -310,8 +355,9 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
         setContentView(R.layout.activity_recherche_partie);
 
         // On vide la liste des identifiants des inscriptions de l'utilisateur.
-        idInscriptions.clear();
+        inscriptions.clear();
 
+        // Récupération des composants.
         Button btnRechercherParVille = findViewById(R.id.btn_rechercher_par_ville);
         Button btnRechercherParDepartement = findViewById(R.id.btn_rechercher_par_departement);
         Button btnRechercherParRegion = findViewById(R.id.btn_rechercher_par_region);
@@ -370,6 +416,7 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
         }
 
 
+        // Clic sur le bouton RETOUR.
         boutonRetour.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -378,6 +425,7 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
             }
         });
 
+        // Clic sur le bouton RECHERCHER PAR VILLE
         btnRechercherParVille.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -391,6 +439,7 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
             }
         });
 
+        // Clic sur le bouton RECHERCHER PAR DEPARTEMENT
         btnRechercherParDepartement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -404,6 +453,7 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
             }
         });
 
+        // Clic sur le bouton RECHERCHER PAR REGION
         btnRechercherParRegion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -417,9 +467,11 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
             }
         });
 
+        // Clic sur le bouton RECHERCHER
         btnRechercherPartie.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // On affiche le layout d'attente et on cache la liste des parties.
                 layoutAttente.setVisibility(View.VISIBLE);
                 listParties.setVisibility(View.GONE);
                 tvAttente.setText("Chargement des parties en cours...");
@@ -436,10 +488,13 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
                     String email = sharedPref.getString("emailUtilisateur", "");
                     String mdp = sharedPref.getString("mdpUtilisateur", "");
 
+                    recherche = AccueilActivity.encoderECommercial(editSaisirRecherche.getText().toString().trim());
+
+                    // Envoi d'une requête permettant de rechercher des parties.
                     String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIParticipant +
                             "/participant/rechercher_partie?email=" + AccueilActivity.encoderECommercial(email) + "&mdp=" +
                             AccueilActivity.encoderECommercial(mdp) + "&typeRecherche=" + typeRecherche +
-                            "&recherche=" + AccueilActivity.encoderECommercial(editSaisirRecherche.getText().toString().trim()) +
+                            "&recherche=" + recherche +
                             "&inclurePartiesPassees=0";
                     RequeteHTTP requeteHTTP = new RequeteHTTP(getApplicationContext(),
                             adresse, RecherchePartieActivity.this);
@@ -448,8 +503,41 @@ public class RecherchePartieActivity extends AppCompatActivity implements Valida
             }
         });
 
+        Intent intent = getIntent();
+        // On récupère le type de recherche et la recherche contenus dans l'intent (quand on vient de VISUALISER LISTE LOTS ou COMMENT REGLER).
+        int typeRecherche = intent.getIntExtra("typeRecherche", RECHERCHE_PAR_VILLE);
+        String laRecherche = intent.getStringExtra("recherche");
+
+        // On affecte à editSaisirRecherche la recherche de l'intent.
+        editSaisirRecherche.setText(laRecherche);
+
+        if((laRecherche != null) && (!laRecherche.trim().equals(""))) {
+            switch(typeRecherche) {
+                case RECHERCHE_PAR_VILLE :
+                    // On clique sur les boutons VILLE puis RECHERCHER par programmation.
+                    btnRechercherParVille.callOnClick();
+                    btnRechercherPartie.callOnClick();
+                    break;
+                case RECHERCHE_PAR_DEPARTEMENT :
+                    // On clique sur les boutons DEPART. puis RECHERCHER par programmation.
+                    btnRechercherParDepartement.callOnClick();
+                    btnRechercherPartie.callOnClick();
+                    break;
+                case RECHERCHE_PAR_REGION :
+                    // On clique sur les boutons REGION puis RECHERCHER par programmation.
+                    btnRechercherParRegion.callOnClick();
+                    btnRechercherPartie.callOnClick();
+                    break;
+                default :
+                    break;
+            }
+        }
     }
 
+    /**
+     * Implémentation de la fonction onFinishEditDialog de l'interface ValidationDialogListener.
+     * @param revenirAAccueil : true si on doit revenir à l'activité appelante, false sinon.
+     */
     @Override
     public void onFinishEditDialog(boolean revenirAAccueil) {
         if(revenirAAccueil) {

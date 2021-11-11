@@ -20,27 +20,29 @@ import com.projects.loto_fine.classes_metier.Personne;
 import java.util.ArrayList;
 
 public class Plateau extends View {
-    private ArrayList<ElementCliquable> listeElementsCliquables;
-    private ArrayList<Carton> cartons;
-    private int pageCourantePortrait = 1, nbPagesPortrait = 1, pageCourantePaysage = 1, nbPagesPaysage = 1, numeroEnCours = -1;
-    private boolean boutonQuineIsActif = false, lotCartonPlein = false;
-    private String lotEnCours = "";
-    private Personne joueur;
-    private Context context;
+    private ArrayList<ElementCliquable> listeElementsCliquables; // Liste des éléments qui vont réagir au clic.
+    private ArrayList<Carton> cartons; // Liste des cartons présents sur le plateau (affichés ou non).
+    private int pageCourantePortrait = 1; // Page courante dans l'affichage portrait.
+    private int nbPagesPortrait = 1; // Nombre de pages dans l'affichage portrait.
+    private int pageCourantePaysage = 1; // Page courante dans l'affichage paysage.
+    private int nbPagesPaysage = 1; // Nombre de pages dans l'affichage paysage.
+    private int numeroEnCours = -1; // Numéro en cours de jeu.
+    private boolean boutonQuineIsActif = false; // Le bouton "Quine !!!" est-il actif.
+    private boolean lotCartonPlein = false; // Le lot en cours de jeu est-il au carton plein ?
+    private String lotEnCours = ""; // Libellé du lot en cours de jeu.
+    private Personne joueur; // Joueur
+    private Context context; // Contexte
 
+    // Constructeur
     public Plateau(Context context) {
         // Appel du constructeur de View
         super(context);
 
         this.context = context;
-
-        Paint paintLigne = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paintLigne.setStyle(Paint.Style.STROKE);
-        paintLigne.setColor(Color.BLACK);
-
         listeElementsCliquables = new ArrayList<>();
     }
 
+    // Accesseurs
     public ArrayList<ElementCliquable> getListeElementsCliquables() {
         return this.listeElementsCliquables;
     }
@@ -101,16 +103,16 @@ public class Plateau extends View {
         this.lotEnCours = lotEnCours;
     }
 
+    // Fonction qui va être appelé quand la vue va se redessiner.
     @Override
     public void onDraw(Canvas canvas) {
         // Déclarations
-        int pagePortrait;
-        int topCartons;
-        int topBoutonCartonsPrecedents;
-        int heightCanvas;
-        int pagePaysage;
-        int top, bottom, left, right;
-        int largeurEcran, hauteurEcran;
+        int pagePortrait; // Numéro de la page en portrait du carton en cours de parcours.
+        int topCartons; // Position en Y du premier carton
+        int topBoutonCartonsPrecedents; // Position en Y du bouton "Cartons précédents"
+        int pagePaysage; // Numéro de la page en mode paysage.
+        int top, bottom, left, right; // Coordonnées des éléments à afficher.
+        int largeurEcran, hauteurEcran; // Largeur et hauteur de l'écran.
 
         // Appel du onDraw de View
         super.onDraw(canvas);
@@ -118,10 +120,7 @@ public class Plateau extends View {
         Log.d("canvas.getWidth() = ", String.valueOf(canvas.getWidth()));
         Log.d("canvas.getHeight() = ", String.valueOf(canvas.getHeight()));
 
-       // Display display = context.getDisplay(); //((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
-
-       // Log.d("Display rotation : ", String.valueOf(display.getRotation()));
-
+        // Récupération des images.
         Drawable drawableLogoSecondaire = ResourcesCompat.getDrawable(getResources(), R.drawable.logo_secondaire, null);
         Drawable drawableBoutonRalentirPartie = ResourcesCompat.getDrawable(getResources(), R.drawable.bouton_ralentir_partie, null);
         Drawable drawableBoutonAccelererPartie = ResourcesCompat.getDrawable(getResources(), R.drawable.bouton_accelerer_partie, null);
@@ -146,15 +145,18 @@ public class Plateau extends View {
         Paint paint = new Paint();
         Rect rect = new Rect();
 
+        // On vide la liste des éléments cliquables.
         listeElementsCliquables.clear();
 
         // Si le téléphone ou la tablette est en position portrait.
         if (canvas.getWidth() < canvas.getHeight()) {
+            // Calcul échelle horizontale et verticale.
             float echelleHorizontale = (float) largeurEcran / (float) Constants.LARGEUR_ECRAN_MAQUETTE;
             float echelleVerticale = (float) hauteurEcran / (float) Constants.HAUTEUR_ECRAN_MAQUETTE;
             Log.d("echelleHorizontale = ", String.valueOf(echelleHorizontale));
             Log.d("echelleVerticale = ", String.valueOf(echelleVerticale));
 
+            // Affichage logo secondaire
             top = Constants.TOP_LOGO_SECONDAIRE_MAQUETTE * hauteurEcran / Constants.HAUTEUR_ECRAN_MAQUETTE;
             bottom = Constants.BOTTOM_LOGO_SECONDAIRE_MAQUETTE * hauteurEcran / Constants.HAUTEUR_ECRAN_MAQUETTE;
             left = (largeurEcran / 2) - (int) (Constants.LOGO_SECONDAIRE_LARGEUR * echelleHorizontale / 2);
@@ -172,7 +174,6 @@ public class Plateau extends View {
 
             paint.setColor(Constants.COULEUR_VIOLET);
             paint.setStyle(Paint.Style.FILL);
-            //paint.setStrokeWidth(3);
             canvas.drawRect(0, top, canvas.getWidth(), bottom, paint);
 
             // Si le lot en cours est définit, on affiche ses informations (nom du lot, à la ligne ou carton plein).
@@ -266,9 +267,9 @@ public class Plateau extends View {
             pagePortrait = 1;
             topCartons = top;
             topBoutonCartonsPrecedents = (int) ((Constants.TOP_BOUTON_CARTONS_PRECEDENTS_MAQUETTE) * echelleVerticale);
-            heightCanvas = canvas.getHeight();
             nbPagesPortrait = 1;
 
+            // Affichage des cartons
             if(cartons != null) {
                 for (int i = 0; i < cartons.size(); i++) {
                     cartons.get(i).setHeight((int)(Constants.NB_LIGNES_CARTON * Constants.TAILLE_CASE_CARTON * echelleHorizontale));
@@ -348,9 +349,11 @@ public class Plateau extends View {
         }
         // Si le téléphone ou la tablette est en position paysage.
         else {
+            // Calcul échelle horizontale et verticale.
             float echelleHorizontale = (float) largeurEcran / (float) Constants.LARGEUR_ECRAN_MAQUETTE_HORIZONTALE;
             float echelleVerticale = (float) hauteurEcran / (float) Constants.HAUTEUR_ECRAN_MAQUETTE_HORIZONTALE;
 
+            // Affichage du logo secondaire
             top = (int) ((Constants.TOP_LOGO_SECONDAIRE_MAQUETTE_HORIZONTALE) * echelleVerticale);
             left = (int) ((Constants.LEFT_LOGO_SECONDAIRE_MAQUETTE_HORIZONTALE) * echelleHorizontale);
             bottom = (int) ((Constants.BOTTOM_LOGO_SECONDAIRE_MAQUETTE_HORIZONTALE) * echelleVerticale);
@@ -464,6 +467,7 @@ public class Plateau extends View {
             topBoutonCartonsPrecedents = (int) ((Constants.TOP_BOUTON_CARTONS_PRECEDENTS_MAQUETTE_HORIZONTALE) * echelleVerticale);
             nbPagesPaysage = 1;
 
+            // Affichage des cartons
             if(cartons != null) {
                 for (int i = 0; i < cartons.size(); i++) {
                     cartons.get(i).setHeight((int)(Constants.NB_LIGNES_CARTON * Constants.TAILLE_CASE_CARTON * echelleHorizontale));

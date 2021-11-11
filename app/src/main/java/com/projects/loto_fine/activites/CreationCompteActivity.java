@@ -24,29 +24,44 @@ import com.projects.loto_fine.classes_utilitaires.RequeteHTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Cette activité est affichée lors du clic sur le bouton M'INSCRIRE/MODIFIER MON COMPTE de l'activité AccueilActivity.
+ * Elle permet à l'utilisateur de créer ou modifier son compte.
+ */
 public class CreationCompteActivity extends AppCompatActivity implements ValidationDialogFragment.ValidationDialogListener {
 
     private EditText edSaisirNom, edSaisirPrenom, edSaisirEmail, edSaisirMdp, edSaisirMdp2, edSaisirAdresse, edSaisirCP, edSaisirVille, edSaisirNumTel;
     private Button btnAnnuler, btnValider;
     private boolean isModificationCompte;
 
+    /**
+     * Fonction qui traite les réponses aux requêtes HTTP.
+     * Réponses traitées : creationCompte, obtentionInfosPersonne et modificationCompte
+     * @param source : action ayant exécutée la requête.
+     * @param reponse : reponse à la requête.
+     * @param isErreur : y a-t-il eu une erreur lors de l'envoi de la requête.
+     */
     public void TraiterReponse(String source, String reponse, boolean isErreur) {
         String message;
         ValidationDialogFragment fmdf = null;
 
         if(source == "creationCompte") {
-            // Si le serveur a renvoyé un erreur lors de la création du compte, alors on l'affiche
+            // Si le serveur a renvoyé un erreur lors de la création du compte, alors on l'affiche.
             if (isErreur) {
                 AccueilActivity.afficherMessage("Erreur lors de la création du compte : " + reponse, false, getSupportFragmentManager());
             } else {
                 try {
+                    // On tente de caster la réponse en JSONObject.
                     JSONObject jo = new JSONObject(reponse);
                     Object objErreur = jo.opt("erreur");
 
+                    // Si la réponse correspond à une erreur, on l'affiche.
                     if (objErreur != null) {
                         message = (String) objErreur;
                         AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
-                    } else {
+                    }
+                    // Sinon, on affiche un message indiquant que le compte a été créé.
+                    else {
                         message = getResources().getString(R.string.texte_compte_cree);
                         AccueilActivity.afficherMessage(message, true, getSupportFragmentManager());
                     }
@@ -61,19 +76,20 @@ public class CreationCompteActivity extends AppCompatActivity implements Validat
             }
             else {
                 try {
+                    // On tente de caster la réponse en JSONObject.
                     JSONObject jo = new JSONObject(reponse);
                     Object objErreur = jo.opt("erreur");
 
+                    // Si la réponse correspond à une erreur, on l'affiche.
                     if (objErreur != null) {
                         message = (String) objErreur;
                         AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
                     }
                     else {
+                        // Seul le mot de passe n'est pas rempli. L'utilisateur devra le saisir à nouveau.
                         edSaisirNom.setText(jo.getString("nom"));
                         edSaisirPrenom.setText(jo.getString("prenom"));
                         edSaisirEmail.setText(jo.getString("email"));
-                        //edSaisirMdp.setText(jo.getString("mdp"));
-                        //edSaisirMdp2.setText(jo.getString("mdp"));
                         edSaisirAdresse.setText(jo.getString("adresse"));
                         edSaisirCP.setText(jo.getString("cp"));
                         edSaisirVille.setText(jo.getString("ville"));
@@ -90,13 +106,17 @@ public class CreationCompteActivity extends AppCompatActivity implements Validat
                 AccueilActivity.afficherMessage("Erreur lors de la création du compte : " + reponse, false, getSupportFragmentManager());
             } else {
                 try {
+                    // On tente de caster la réponse en JSONObject.
                     JSONObject jo = new JSONObject(reponse);
                     Object objErreur = jo.opt("erreur");
 
+                    // Si la réponse correspond à une erreur, on l'affiche.
                     if (objErreur != null) {
                         message = (String) objErreur;
                         AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
-                    } else {
+                    }
+                    // Sinon, on affiche un message à l'utilisateur indiquant que son compte a bien été modifié.
+                    else {
                         message = getResources().getString(R.string.texte_compte_modifie);
                         AccueilActivity.afficherMessage(message, true, getSupportFragmentManager());
                     }
@@ -113,11 +133,13 @@ public class CreationCompteActivity extends AppCompatActivity implements Validat
         setContentView(R.layout.activity_creation_compte);
 
         SharedPreferences sharedPref = getSharedPreferences("MyData", Context.MODE_PRIVATE);
+        // On va chercher l'adresse du serveur dans les SharedPreferences.
         String adresseServeur = sharedPref.getString("AdresseServeur", "");
         isModificationCompte = false;
 
         final View activityCreationCompte = findViewById(R.id.edit_saisir_adresse).getRootView();
 
+        // Récupération des composants depuis le layout.
         edSaisirNom = (EditText) findViewById(R.id.edit_saisir_nom);
         edSaisirPrenom = (EditText) findViewById(R.id.edit_saisir_prenom);
         edSaisirEmail = (EditText) findViewById(R.id.edit_saisir_email);
@@ -231,6 +253,7 @@ public class CreationCompteActivity extends AppCompatActivity implements Validat
                                 edSaisirMdp2.setText(edSaisirMdp.getText());
                             }
 
+                            // Construction de l'adresse permettant de modifier le compte.
                             String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIParticipant + "/participant/modifier-compte?" +
                                     "email=" + AccueilActivity.encoderECommercial(edSaisirEmail.getText().toString()) +
                                     "&mdp=" + AccueilActivity.encoderECommercial(edSaisirMdp.getText().toString()) +
@@ -243,9 +266,11 @@ public class CreationCompteActivity extends AppCompatActivity implements Validat
                                     "&numTel=" + AccueilActivity.encoderECommercial(edSaisirNumTel.getText().toString());
                             RequeteHTTP requeteHTTP = new RequeteHTTP(getBaseContext(),
                                     adresse, CreationCompteActivity.this);
+                            // Envoi de la requête permettant de modifier le compte.
                             requeteHTTP.traiterRequeteHTTPJSON(CreationCompteActivity.this, "ModificationCompte", "PUT", "", getSupportFragmentManager());
                         }
                         else {
+                            // Construction de l'adresse permettant de créer le compte.
                             String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIParticipant + "/participant/add?nom=" +
                                     AccueilActivity.encoderECommercial(edSaisirNom.getText().toString()) +
                                     "&prenom=" + AccueilActivity.encoderECommercial(edSaisirPrenom.getText().toString()) +
@@ -259,6 +284,7 @@ public class CreationCompteActivity extends AppCompatActivity implements Validat
 
                             RequeteHTTP requeteHTTP = new RequeteHTTP(getBaseContext(),
                                     adresse, CreationCompteActivity.this);
+                            // Envoi de la requête permettant de créer le compte.
                             requeteHTTP.traiterRequeteHTTPJSON(CreationCompteActivity.this, "CreationCompte", "POST", "", getSupportFragmentManager());
                         }
                     }
@@ -266,6 +292,7 @@ public class CreationCompteActivity extends AppCompatActivity implements Validat
             }
         });
 
+        // Si l'adresse du serveur n'est pas renseignée dans les SharedPreferences, on affiche une erreur.
         if(adresseServeur.trim().equals("")) {
             AccueilActivity.afficherMessage("Veuillez renseigner l'adresse du serveur dans les paramètres.", true, getSupportFragmentManager());
         }
@@ -282,34 +309,20 @@ public class CreationCompteActivity extends AppCompatActivity implements Validat
                 edSaisirMdp.setHint("Saisissez votre mdp actuel");
                 edSaisirMdp2.setHint("Saisissez votre nouveau mdp");
 
+                // On construit l'URL permettant d'obtenir les informations de la personne.
                 String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIParticipant + "/participant/get_infos_personne?email=" + email;
                 RequeteHTTP requeteHTTP = new RequeteHTTP(getBaseContext(),
                         adresse, CreationCompteActivity.this);
+                // On envoie la requête permettant d'obtenir les informations de la personne.
                 requeteHTTP.traiterRequeteHTTPJSON(CreationCompteActivity.this, "ObtentionInfosPersonne", "GET", "", getSupportFragmentManager());
             }
         }
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString("nomUtilisateur", edSaisirNom.getText().toString());
-        outState.putString("prenomUtilisateur", edSaisirPrenom.getText().toString());
-        outState.putString("emailUtilisateur", edSaisirEmail.getText().toString());
-        outState.putString("mdpUtilisateur", edSaisirMdp.getText().toString());
-        outState.putString("mdp2Utilisateur", edSaisirMdp2.getText().toString());
-        outState.putString("adresseUtilisateur", edSaisirAdresse.getText().toString());
-        outState.putString("cpUtilisateur", edSaisirCP.getText().toString());
-        outState.putString("villeUtilisateur", edSaisirVille.getText().toString());
-        outState.putString("numTelUtilisateur", edSaisirNumTel.getText().toString());
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        edSaisirNom.setText(savedInstanceState.getString("nomUtilisateur"));
-    }
-
+    /**
+     * Implémentation de la fonction onFinishEditDialog de l'interface ValidationDialogListener.
+     * @param revenirAAccueil : true si on doit revenir à l'activité appelante, false sinon.
+     */
     @Override
     public void onFinishEditDialog(boolean revenirAAccueil) {
         if(revenirAAccueil) {

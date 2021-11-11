@@ -1,13 +1,18 @@
 package com.projects.loto_fine.classes_metier;
 
+/**
+ * Classe qui représente un participant inscrit à une partie de loto.
+ * Cette classe fait partie du modèle.
+ */
 public class Inscrit {
-    private int id;
-    private String nom;
-    private String prenom;
-    private String email;
-    private String numtel;
-    private boolean isInscriptionValidee;
+    private int id; // Identifiant
+    private String nom; // Nom du participant inscrit
+    private String prenom; // Prénom du participant inscrit
+    private String email; // E-mail du participant inscrit
+    private String numtel; // Numéro de téléphone du participant inscrit
+    private boolean isInscriptionValidee; // L'inscription est-elle validée ?
 
+    // Accesseurs
     public int getId() {
         return id;
     }

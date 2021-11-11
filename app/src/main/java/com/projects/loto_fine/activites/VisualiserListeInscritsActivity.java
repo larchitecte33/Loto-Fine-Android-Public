@@ -26,15 +26,26 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Cette activité est affichée lors du clic sur le bouton VISUALISER LISTE INSCRITS de de l'adapter PartieAdapter.
+ * Elle permet à l'utilisateur de visualiser la liste des inscrits dans une partie qu'il anime.
+ */
 public class VisualiserListeInscritsActivity extends AppCompatActivity implements ValidationDialogFragment.ValidationDialogListener {
 
-    private LinkedList<Inscrit> inscrits = new LinkedList<>();
-    private ListView listeInscrits;
+    private LinkedList<Inscrit> inscrits = new LinkedList<>(); // Liste des inscrits.
+    private ListView listeInscrits; // ListView affichant la liste des inscrits.
     private LinearLayout layoutAttente;
     private String adresseServeur;
     private SharedPreferences sharedPref;
-    private List<Boolean> inscriptionsReglees = new ArrayList<>();
+    private List<Boolean> inscriptionsReglees = new ArrayList<>(); // Liste indiquant si l'inscrit a réglé son inscription.
 
+    /**
+     * Fonction qui traite les réponses aux requêtes HTTP.
+     * Réponses traitées : rechercheListeInscrits et changerStatutValidationInscriptions.
+     * @param source : action ayant exécutée la requête.
+     * @param reponse : reponse à la requête.
+     * @param isErreur : y a-t-il eu une erreur lors de l'envoi de la requête.
+     */
     public void TraiterReponse(String source, String reponse, boolean isErreur) {
         String message;
         ValidationDialogFragment vdf = null;
@@ -42,18 +53,24 @@ public class VisualiserListeInscritsActivity extends AppCompatActivity implement
         JSONArray ja = null;
 
         if (source == "rechercheListeInscrits") {
+            // S'il y a une erreur lors de la recherche de la liste des inscrits, on l'affiche.
             if (isErreur) {
                 message = "Une erreur est survenue : ";
                 AccueilActivity.afficherMessage(message + reponse, false, getSupportFragmentManager());
             } else {
                 try {
+                    // On vide la liste des inscrits.
                     inscrits.clear();
+
+                    // On tente de caster la réponse en JSONArray.
                     ja = new JSONArray(reponse);
 
                     // On parcourt le JSONArray
                     for (int i = 0; i < ja.length(); i++) {
+                        // On extrait le JSONObject contenant les informations de l'inscrit.
                         jo = (JSONObject) ja.get(i);
 
+                        // On crée un nouvel Inscrit et on lui affecte les informations extraites du JSONObject.
                         Inscrit inscrit = new Inscrit();
                         inscrit.setId(jo.getInt("id"));
                         inscrit.setNom(jo.getString("nom"));
@@ -61,10 +78,14 @@ public class VisualiserListeInscritsActivity extends AppCompatActivity implement
                         inscrit.setEmail(jo.getString("email"));
                         inscrit.setNumtel(jo.getString("numTel"));
                         inscrit.setInscriptionValidee(jo.getBoolean("isInscriptionReglee"));
+
+                        // On ajoute l'inscrit à la liste des inscrits.
                         inscrits.add(inscrit);
+                        // On ajoute le statut du règlement de l'inscription à la liste indiquant si l'inscrit a réglé son inscription.
                         inscriptionsReglees.add(jo.getBoolean("isInscriptionReglee"));
                     }
 
+                    // On crée un nouvel ArrayAdapter de type InscritAdapter et on lui passe la liste des inscrits.
                     InscritAdapter adapter = new InscritAdapter(this, this, R.layout.activity_visualiser_liste_inscrits_adapter, inscrits);
                     listeInscrits = (ListView)findViewById(R.id.visu_liste_inscrits_scroll_inscrits);
                     listeInscrits.setAdapter(adapter);
@@ -95,15 +116,18 @@ public class VisualiserListeInscritsActivity extends AppCompatActivity implement
             }
         }
         else if(source == "changerStatutValidationInscriptions") {
+            // S'il y a une erreur lors du changement de statut de valiation des inscriptions, alors on l'affiche.
             if (isErreur) {
                 message = "Une erreur est survenue : ";
                 AccueilActivity.afficherMessage(message + reponse, false, getSupportFragmentManager());
             }
             else {
                 try {
+                    // On tente de caster la réponse en JSONObject.
                     jo = new JSONObject(reponse);
                     Object objErreur = jo.opt("erreur");
 
+                    // Si la réponse correspond à une erreur, on l'affiche.
                     if (objErreur != null) {
                         message = (String) objErreur;
                         AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
@@ -204,6 +228,10 @@ public class VisualiserListeInscritsActivity extends AppCompatActivity implement
         }
     }
 
+    /**
+     * Implémentation de la fonction onFinishEditDialog de l'interface ValidationDialogListener.
+     * @param revenirAAccueil : true si on doit revenir à l'activité appelante, false sinon.
+     */
     @Override
     public void onFinishEditDialog(boolean revenirAAccueil) {
         if(revenirAAccueil) {

@@ -11,7 +11,15 @@ import java.security.spec.KeySpec;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
+/**
+ * Cette classe des fonctions utiles pour chiffrer des données.
+ */
 public class Cryptage {
+    /**
+     * Génération d'un hash avec la fonction SHA-1.
+     * @param donnees : données à hacher.
+     * @return un hash du contenu du paramètre donnees avec la fonction SHA-1.
+     */
     public String getSha1(String donnees) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-1");
@@ -36,6 +44,11 @@ public class Cryptage {
         }
     }
 
+    /**
+     * Génération d'un hash avec la fonction PBKDF2.
+     * @param donnees : données à hacher.
+     * @return un hash du contenu du paramètre donnees avec la fonction PBKDF2.
+     */
     public String getPbkdf2(String donnees) {
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[16];

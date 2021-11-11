@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 
 import com.projects.loto_fine.activites.MainActivity;
 
+// Test
 public class MessageBox
 {
     public void show(String title, String message, Context context)

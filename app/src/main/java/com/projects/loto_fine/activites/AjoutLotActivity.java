@@ -21,6 +21,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Cette activité est affichée lors du clic sur le bouton "AJOUTER UN LOT" de l'activité VisualiserListeLotsActivite.
+ * Elle permet à l'utilisateur de saisir le informations d'un nouveau lot (nom du lot, valeur du lot et à la ligne ou au carton plein).
+ */
 public class AjoutLotActivity extends AppCompatActivity implements ValidationDialogFragment.ValidationDialogListener {
 
     private SharedPreferences sharedPref;
@@ -28,13 +32,21 @@ public class AjoutLotActivity extends AppCompatActivity implements ValidationDia
     private int positionMax = -1;
     private String emailAnimateur = "", source = "";
 
+    /**
+     * Fonction qui traite les réponses aux requêtes HTTP.
+     * Réponses traitées : recuperationInfosLots, ajoutLot.
+     * @param source : action ayant exécutée la requête.
+     * @param reponse : reponse à la requête.
+     * @param isErreur : y a-t-il eu une erreur lors de l'envoi de la requête.
+     */
     public void TraiterReponse(String source, String reponse, boolean isErreur) {
         String message = "";
-        ValidationDialogFragment vdf;
 
         if (source == "recuperationInfosLots") {
+            // JSONArray qui va servir à stocker les données de la réponse.
             JSONArray ja;
 
+            // Si une erreur a été renvoyée par le serveur, on l'affiche.
             if(isErreur) {
                 AccueilActivity.afficherMessage("Erreur lors de la récupération des informations concernant les lots : " + reponse, false, getSupportFragmentManager());
             }
@@ -76,17 +88,22 @@ public class AjoutLotActivity extends AppCompatActivity implements ValidationDia
             }
         }
         else if (source == "ajoutLot") {
+            // Si une erreur a été renvoyée par le serveur, on l'affiche.
             if(isErreur) {
                 AccueilActivity.afficherMessage("Erreur lors de l'ajout du lot : " + reponse, false, getSupportFragmentManager());
             }
             else {
                 try {
                     JSONObject jo = new JSONObject(reponse);
+                    // On va voir si le JSON renvoyé correspond à une erreur.
                     Object objErreur = jo.opt("erreur");
 
+                    // Si c'est le cas, on l'affiche.
                     if (objErreur != null) {
                         AccueilActivity.afficherMessage(objErreur.toString(), false, getSupportFragmentManager());
-                    } else {
+                    }
+                    // Sinon, on affiche un message indiquant que tout s'est bien passé.
+                    else {
                         AccueilActivity.afficherMessage("L'ajout du lot a été effectué.", true, getSupportFragmentManager());
                     }
                 }
@@ -106,14 +123,17 @@ public class AjoutLotActivity extends AppCompatActivity implements ValidationDia
         setContentView(R.layout.activity_ajout_lot);
 
         Intent intent = getIntent();
+        // On récupère les valeurs passées dans l'intent.
         idPartie = intent.getIntExtra("idPartie", -1);
         emailAnimateur = intent.getStringExtra("emailAnimateur");
         source = intent.getStringExtra("source");
 
         sharedPref = getSharedPreferences("MyData", Context.MODE_PRIVATE);
+        // On récupère l'adrese du serveur dans les SharedPreferences.
         String adresseServeur = sharedPref.getString("AdresseServeur", "");
         String messageErreur;
 
+        // Si l'adresse du serveur n'est pas définie, on affiche une erreur.
         if(adresseServeur.trim().equals("")) {
             messageErreur = "Veuillez renseigner l'adresse du serveur dans les paramètres.";
             AccueilActivity.afficherMessage(messageErreur, false, getSupportFragmentManager());
@@ -123,11 +143,13 @@ public class AjoutLotActivity extends AppCompatActivity implements ValidationDia
             String email = sharedPref.getString("emailUtilisateur", "");
             String mdp = sharedPref.getString("mdpUtilisateur", "");
 
+            // Construction de l'adresse permettant de récupérer les lots de la partie.
             String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIAnimateur + "/animateur/recuperation-lots?email="
                     + AccueilActivity.encoderECommercial(email) + "&mdp=" + AccueilActivity.encoderECommercial(mdp) + "&idPartie=" + idPartie;
 
             RequeteHTTP requeteHTTP = new RequeteHTTP(getApplicationContext(),
                     adresse, AjoutLotActivity.this);
+            // On envoi la requête qui doit renvoyer un array JSON.
             requeteHTTP.traiterRequeteHTTPJSONArray(AjoutLotActivity.this, "RecuperationInfosLots", "GET", getSupportFragmentManager());
         }
 
@@ -165,10 +187,12 @@ public class AjoutLotActivity extends AppCompatActivity implements ValidationDia
                 String nomLot = editNomLot.getText().toString();
                 int isALaLigne = 1;
 
+                // Si le nom du lot n'est pas renseigné, on affiche une erreur.
                 if(nomLot.equals("")) {
                     AccueilActivity.afficherMessage("Le nom du lot doit être renseigné.", false, getSupportFragmentManager());
                 }
                 else {
+                    // On va voir si la valeur du lot est bien un double.
                     try {
                         valeurLot = Double.valueOf(editValeurLot.getText().toString());
                     }
@@ -184,11 +208,13 @@ public class AjoutLotActivity extends AppCompatActivity implements ValidationDia
                         isALaLigne = 1;
                     }
 
+                    // S'il n'y a pas d'erreur dans la saisie, on continue.
                     if(!erreurTrouvee) {
                         // On va chercher l'email et le mot de passe de l'utilisateur dans les SharedPreferences.
                         String email = sharedPref.getString("emailUtilisateur", "");
                         String mdp = sharedPref.getString("mdpUtilisateur", "");
 
+                        // On crée la requête permettant d'ajouter le lot à la partie.
                         String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIAnimateur + "/animateur/creation-lot?email=" +
                                 AccueilActivity.encoderECommercial(email) +
                                 "&mdp=" + AccueilActivity.encoderECommercial(mdp) +
@@ -199,6 +225,7 @@ public class AjoutLotActivity extends AppCompatActivity implements ValidationDia
 
                         RequeteHTTP requeteHTTP = new RequeteHTTP(getApplicationContext(),
                                 adresse, AjoutLotActivity.this);
+                        // On envoie la requête permettant d'ajouter le lot à la partie.
                         requeteHTTP.traiterRequeteHTTPJSON(AjoutLotActivity.this, "AjoutLot", "POST", "", getSupportFragmentManager());
                     }
                 }
@@ -206,8 +233,13 @@ public class AjoutLotActivity extends AppCompatActivity implements ValidationDia
         });
     }
 
+    /**
+     * Implémentation de la fonction onFinishEditDialog de l'interface ValidationDialogListener.
+     * @param revenirAAccueil : true si on doit revenir à l'activité appelante, false sinon.
+     */
     @Override
     public void onFinishEditDialog(boolean revenirAAccueil) {
+        // Si on revient à l'activité appelante.
         if(revenirAAccueil) {
             Intent intent = new Intent(getApplicationContext(), VisualiserListeLotsActivity.class);
             intent.putExtra("idPartie", idPartie);

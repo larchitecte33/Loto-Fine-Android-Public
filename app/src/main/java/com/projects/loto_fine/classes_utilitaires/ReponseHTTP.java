@@ -1,9 +1,11 @@
 package com.projects.loto_fine.classes_utilitaires;
 
+// Classe représentant une réponse HTTP.
 public class ReponseHTTP {
-    private boolean isError;
-    private String message;
+    private boolean isError; // Y a-t-il une erreur ?
+    private String message; // Message contenu dans la réponse.
 
+    // Accesseurs
     public boolean isError() {
         return isError;
     }

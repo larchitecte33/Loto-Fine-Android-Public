@@ -26,6 +26,10 @@ import org.json.JSONObject;
 
 import java.util.LinkedList;
 
+/**
+ * Cette activité est affichée lors du clic sur le bouton FEEDBACK de l'activité AccueilActivity.
+ * Elle permet à l'utilisateur de répondre au questionnaire de feedback.
+ */
 public class FeedBackActivity extends AppCompatActivity implements ValidationDialogFragment.ValidationDialogListener {
 
     private LinkedList<Question> questions = new LinkedList<>();
@@ -34,6 +38,13 @@ public class FeedBackActivity extends AppCompatActivity implements ValidationDia
     private String adresseServeur;
     private LinearLayout layoutAttente;
 
+    /**
+     * Fonction qui traite les réponses aux requêtes HTTP.
+     * Réponses traitées : recuperationQuestionsFeedback et envoyerReponsesFeedback.
+     * @param source : action ayant exécutée la requête.
+     * @param reponse : reponse à la requête.
+     * @param isErreur : y a-t-il eu une erreur lors de l'envoi de la requête.
+     */
     public void TraiterReponse(String source, String reponse, boolean isErreur) {
         String message;
         ValidationDialogFragment vdf = null;
@@ -45,25 +56,31 @@ public class FeedBackActivity extends AppCompatActivity implements ValidationDia
             layoutAttente.setVisibility(View.GONE);
             listeQuestions.setVisibility(View.VISIBLE);
 
+            // Si le serveur a renvoyé un erreur lors de la récupération des questions, alors on l'affiche.
             if (isErreur) {
                 message = "Une erreur est survenue lors de la récupération des questions : ";
                 AccueilActivity.afficherMessage(message + reponse, false, getSupportFragmentManager());
             } else {
                 try {
+                    // On tente de caster la réponse en JSONArray.
                     ja = new JSONArray(reponse);
                     questions.clear();
 
-                    // On parcourt le JSONArray
+                    // On parcourt le JSONArray contenant les questions du feedback.
                     for (int i = 0; i < ja.length(); i++) {
+                        // On va chercher le JSONObject représentant la question en cours.
                         jo = (JSONObject) ja.get(i);
 
+                        // On crée une Question à partir des données extraites du JSONObject.
                         Question question = new Question();
                         question.setId(jo.getInt("id"));
                         question.setTexte(jo.getString("texteQuestion"));
 
+                        // On ajoute la question à la liste des questions.
                         questions.add(question);
                     }
 
+                    // On construit un ArrayAdapter de type QuestionAdapter en lui passant la liste des questions.
                     QuestionAdapter adapter = new QuestionAdapter(this, this, R.layout.activity_feed_back_adapter, questions);
                     listeQuestions.setAdapter(adapter);
                 }
@@ -88,26 +105,33 @@ public class FeedBackActivity extends AppCompatActivity implements ValidationDia
             }
         }
         else if (source == "envoyerReponsesFeedback") {
+            // Si le serveur a renvoyé un erreur lors de l'envoi des réponses, alors on l'affiche.
             if (isErreur) {
                 message = "Une erreur est survenue lors de l'envoi des réponses : ";
                 vdf = new ValidationDialogFragment(message + reponse, false);
                 vdf.show(getSupportFragmentManager(), "");
             } else {
                 try {
+                    // On récupère la réponse sous forme d'un JSONArray.
                     ja = new JSONArray(reponse);
 
+                    // Si le JSONArray n'a aucune entrée, on renvoie une erreur.
                     if(ja.length() < 1) {
                         AccueilActivity.afficherMessage("Les réponses n'ont pas été envoyées.", false, getSupportFragmentManager());
                     }
                     else {
+                        // On va chercher le JSONObject contenant la réponse.
                         jo = ja.getJSONObject(0);
 
+                        // Si la réponse correspond à une erreur, on affiche cette erreur.
                         if(jo.opt("erreur") != null) {
                             AccueilActivity.afficherMessage(jo.getString("erreur"), false, getSupportFragmentManager());
                         }
+                        // Si la réponse à pour clé message et pour valeur OK, alors les réponses ont bien été reçues par le serveur.
                         else if(jo.getString("message").toString().equals("OK")) {
                             AccueilActivity.afficherMessage("Les réponses ont été envoyées.", true, getSupportFragmentManager());
                         }
+                        // Sinon, il y a eu une erreur lors de la réception des réponses.
                         else {
                             AccueilActivity.afficherMessage("Les réponses n'ont pas été envoyées.", false, getSupportFragmentManager());
                         }
@@ -165,6 +189,7 @@ public class FeedBackActivity extends AppCompatActivity implements ValidationDia
             requeteHTTP.traiterRequeteHTTPJSONArray(FeedBackActivity.this, "RecuperationQuestionsFeedback", "GET", getSupportFragmentManager());
         }
 
+        // Gestion du clic sur le bouton Annuler.
         btnAnnulerFeedBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -173,9 +198,11 @@ public class FeedBackActivity extends AppCompatActivity implements ValidationDia
             }
         });
 
+        // Gestion du clic sur le bouton Valider.
         btnValiderFeedBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Construction de l'array JSON contenant les réponses aux questions.
                 String jsonReponses = "[";
 
                 for(int i = 0 ; i < questions.size() ; i++) {
@@ -197,14 +224,17 @@ public class FeedBackActivity extends AppCompatActivity implements ValidationDia
                 String email = sharedPref.getString("emailUtilisateur", "");
                 String mdp = sharedPref.getString("mdpUtilisateur", "");
 
+                // Si l'e-mail ou le mot de passe n'est pas renseigné, alors on affiche une erreur.
                 if((email.trim().length() == 0) || mdp.trim().length() == 0) {
                     AccueilActivity.afficherMessage("Veuillez vous connecter pour effectuer cette action.", false, getSupportFragmentManager());
                 }
                 else {
+                    // On construit l'URL permettant d'envoyer les réponses au feedback au serveur.
                     String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIParticipant +
                             "/participant/envoyer-reponses-feedback?email=" + email + "&mdp=" + mdp;
                     RequeteHTTP requeteHTTP = new RequeteHTTP(getApplicationContext(),
                             adresse, FeedBackActivity.this);
+                    // On envoie la requête permettant d'envoyer les réponses au feedback au serveur.
                     requeteHTTP.traiterRequeteHTTPJSON(FeedBackActivity.this, "EnvoyerReponsesFeedback", "POST",
                             jsonReponses, getSupportFragmentManager());
                 }
@@ -212,6 +242,10 @@ public class FeedBackActivity extends AppCompatActivity implements ValidationDia
         });
     }
 
+    /**
+     * Implémentation de la fonction onFinishEditDialog de l'interface ValidationDialogListener.
+     * @param revenirAAccueil : true si on doit revenir à l'activité appelante, false sinon.
+     */
     @Override
     public void onFinishEditDialog(boolean revenirAAccueil) {
         if(revenirAAccueil) {

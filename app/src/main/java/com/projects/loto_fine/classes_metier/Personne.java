@@ -1,16 +1,21 @@
 package com.projects.loto_fine.classes_metier;
 
+/**
+ * Classe qui représente une personne.
+ * Cette classe fait partie du modèle.
+ */
 public class Personne {
-    private int id;
-    private String nom;
-    private String prenom;
-    private String email;
-    private String mdp;
-    private String adresse;
-    private String ville;
-    private String cp;
-    private String numtel;
+    private int id; // Identifiant de la personne
+    private String nom; // Nom de la personne
+    private String prenom; // Prénom de la personne
+    private String email; // E-mail de la personne
+    private String mdp; // Mot de passe de la personne
+    private String adresse; // Adresse de résidence de la personne
+    private String ville; // Ville de résidence de la personne
+    private String cp; // Code postal du lieu de résidence de la personne
+    private String numtel; // numéro de téléphone de la personne
 
+    // Accesseurs
     public int getId() {
         return id;
     }

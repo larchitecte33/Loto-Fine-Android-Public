@@ -25,35 +25,67 @@
             android:text="Visualisation de la liste des lots"
             android:textColor="@color/vert"
             android:textSize="@dimen/text_size"></TextView>
+        <LinearLayout
+            android:id="@+id/visu_liste_lots_layout_attente"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|center_horizontal"
+                android:gravity="center"
+                android:text="Chargement des lots en cours..."
+                android:textSize="@dimen/text_size"></TextView>
+        </LinearLayout>
         <ListView
             android:id="@+id/visu_liste_lots_scroll_lots"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"></ListView>
+            android:layout_weight="1"
+            android:visibility="gone"></ListView>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="5"
-            android:gravity="center">
+            android:id="@+id/visu_liste_lots_layout_ajouter_lot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_marginRight="50px">
 
             <Button
                 android:id="@+id/visu_liste_lots_btn_ajouter_lot"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="20px"
-                android:text="Ajouter un lot"
+                android:layout_gravity="right"
+                android:layout_marginBottom="18dp"
                 android:backgroundTint="@color/violet"
                 android:textColor="@color/vert"
-                android:textSize="@dimen/text_size"></Button>
+                android:text="Ajouter un lot"
+                android:textSize="@dimen/text_size"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_marginLeft="50px">
 
             <Button
                 android:id="@+id/visu_liste_lots_btn_retour"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/texte_retour"
+                android:layout_gravity="center"
                 android:backgroundTint="@color/violet"
                 android:textColor="@color/vert"
-                android:textSize="@dimen/text_size"></Button>
+                android:text="@string/texte_retour"
+                android:textSize="@dimen/text_size"/>
         </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

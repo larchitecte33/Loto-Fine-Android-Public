@@ -37,32 +37,32 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+/**
+ * Cette activité est affichée lors du clic sur le bouton DEMARRER LA PARTIE de l'adapter PartieAdapter.
+ * Elle permet à l'utilisateur de participer à une partie.
+ */
 public class MainActivity extends AppCompatActivity implements ValidationDialogFragment.ValidationDialogListener,
         OuiNonDialogFragment.OuiNonDialogListener {
 
-    private Carton monPremierCarton, monDeuxiemeCarton, carton;
-    private boolean isCartonsArrives = false;
-    private ArrayList<Carton> cartons;
-    private Plateau plateau;
-    private int idDernierCartonUtilise = -1;
-    private String cleRecuperationQuine = "";
-    private boolean isQuineRecuperee = true;
-    private String adresseServeur = "";
-    private SharedPreferences sharedPref;
-    private Future longRunningTaskFuture, taskMAJInfosTablette;
-    private Personne joueur = null;
-    private InputStream input;
-    private BufferedReader reader;
-    private Socket socket;
-    private boolean isMAJInfosTabletteEnCours = false;
-    private Date dateDerniereMAJInfos;
-    private int idPartie = -1;
-    private boolean isLotPrecedentCartonPlein = false;
-    private String lotEnCoursPrecedent = "";
+    private Carton carton;
+    private ArrayList<Carton> cartons; // Liste des cartons du participant.
+    private Plateau plateau; // Plateau de jeu du participant.
+    private int idDernierCartonUtilise = -1; // Identifiant du dernier carton sur lequel l'utilisateur a déposé ou retiré un pion.
+    private String cleRecuperationQuine = ""; // Clé de récupération de la quine.
+    private boolean isQuineRecuperee = true; // Sert à indiquer si le statut de la quine a été récupéré ou non.
+    private String adresseServeur = ""; // Adresse du serveur
+    private SharedPreferences sharedPref; // Shared Preferences servant à récupérer/mettre à jour des valeurs stockées sur le téléphone/la tablette.
+    private Future longRunningTaskFuture; // Utilisé pour récupérer le statut de la quine.
+    private Personne joueur = null; // Stocke les informations du participant.
+    private int idPartie = -1; // Stocke l'identifiant de la partie.
+    private boolean isLotPrecedentCartonPlein = false; // true si le lot précédent était au carton plein, false sinon.
+    private String lotEnCoursPrecedent = ""; // Lot précédent
 
-    private int numeroTire = 0;
-    private String lotEnCours = "";
-    private boolean isLotEnCoursCartonPlein = false;
+    private int numeroTire = 0; // Numéro tiré
+    private String lotEnCours = ""; // Lot en cours
+    private boolean isLotEnCoursCartonPlein = false; // true si le lot en cours est au carton plein, false sinon.
+    // Client STOMP qui va permettre de récupérer les informations de la partie en-cours (numéro en-cours,
+    // lot en-cours et lot à la ligne ou au carton plein).
     private ClientStomp clientStomp;
 
     // Setters
@@ -78,11 +78,16 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
         this.isLotEnCoursCartonPlein = isLotEnCoursCartonPlein;
     }
 
+    /**
+     * Fonction permettant de rafraichir le numéro en cours ainsi que les informations du lot en cours (libellé et au carton plein ou à la ligne)
+     */
     public void rafraichirInfosNumeroLot() {
+        // Un numéro tiré à -1 correspond à une fin de partie.
         if(numeroTire == -1) {
             AccueilActivity.afficherMessage("La partie est terminée", true, getSupportFragmentManager());
         }
 
+        // On met à jour les informations de la vue Plateau.
         plateau.setNumeroEnCours(numeroTire);
         plateau.setLotEnCours(lotEnCours);
         plateau.setLotCartonPlein(isLotEnCoursCartonPlein);
@@ -98,9 +103,11 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
         lotEnCoursPrecedent = lotEnCours;
         isLotPrecedentCartonPlein = isLotEnCoursCartonPlein;
 
+        // On met à jour la vue Plateau.
         plateau.invalidate();
     }
 
+    // Plus utilisé
     Thread threadVerificationQuine = new Thread() {
         @Override
         public void run() {
@@ -129,8 +136,10 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
         }
     };
 
+    // ExecutorService servant à lancer le Runnable servant quant à lui à récupérer le statut de la quine.
     ExecutorService executorService = Executors.newSingleThreadExecutor();
 
+    // Runnable servant à récupérer le statut de la quine.
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
@@ -139,18 +148,23 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
                 AccueilActivity.afficherMessage("Veuillez renseigner l'adresse du serveur dans les paramètres.", false, getSupportFragmentManager());
             }
             else {
+                // On récupère l'e-mail et le mot de passe de l'utilisateur dans les SharedPreferences.
                 String email = sharedPref.getString("emailUtilisateur", "");
                 String mdp = sharedPref.getString("mdpUtilisateur", "");
                 isQuineRecuperee = false;
 
+                // Tant que le statut de la quine n'est pas récupéré
                 while (!isQuineRecuperee) {
+                    // On attend 2 secondes.
                     try {
                         Thread.sleep(2000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
 
+                    // Si le statut de la quine n'a pas encore été récupéré
                     if(!isQuineRecuperee) {
+                        // On envoie une requête permettant de vérifier le statut de la quine (attente, valide ou invalide).
                         String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIParticipant + "/participant/recuperation-quine?email=" + email +
                                 "&mdp=" + mdp + "&idPartie=" + idPartie + "&cle=" + cleRecuperationQuine;
                         RequeteHTTP requeteHTTP = new RequeteHTTP(getApplicationContext(), adresse, MainActivity.this);
@@ -161,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
         }
     };
 
+    // Plus utilisé
     Runnable runnableMAJInfosTablette = new Runnable() {
         @Override
         public void run() {
@@ -190,14 +205,19 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
         }
     };
 
+    // Fonction servant à lancer la récupération du statut de la quine.
     public void runThread() {
        longRunningTaskFuture = executorService.submit(runnable);
     }
 
-    public void runThreadMAJInfosTablette() {
-    }
-
-
+    /**
+     * Fonction qui traite les réponses aux requêtes HTTP.
+     * Réponses traitées : recuperationCartons, envoiQuine, recuperationQuine, obtentionInfosPersonne, majInfosTablette, enregistrerConnexionAPartie et
+     *                     supprimerEnregistrementConnexionAPartie.
+     * @param source : action ayant exécutée la requête.
+     * @param reponse : reponse à la requête.
+     * @param isErreur : y a-t-il eu une erreur lors de l'envoi de la requête.
+     */
     public void TraiterReponse(String source, String reponse, boolean isErreur) {
         String message = "";
         ValidationDialogFragment vdf;
@@ -212,32 +232,39 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
                     // Déclarations
                     // Les carton sont envoyé sous la forme d'un JSONArray.
                     JSONArray cartonsJSON = new JSONArray(reponse);
-                    JSONArray ligne1, ligne2, ligne3;
-                    JSONObject cartonJSON, casesJSON;
-                    CaseCarton[][] casesCarton;
+                    JSONArray ligne1, ligne2, ligne3; // JSONArrays stockant chacun les informations d'une ligne d'un carton.
+                    JSONObject cartonJSON, casesJSON; // cartonJSON : représentation JSON d'un carton, casesJSON : représentation JSON des cases d'un carton.
+                    CaseCarton[][] casesCarton; // Cases d'un carton sous forme d'un tableau à deux dimensions.
                     int valeurCase = -1, ligne, colonne, idInt;
                     String id;
 
+                    // On crée une nouvelle ArrayList vide pour les cartons.
                     cartons = new ArrayList<>();
 
                     // Pour chaque carton contenu dans le JSON
                     for (int i = 0; i < cartonsJSON.length(); i++) {
+                        // On va chercher le carton sous format JSON.
                         cartonJSON = (JSONObject) cartonsJSON.get(i);
+                        // On va chercher les cases du carton sous format JSON.
                         casesJSON = cartonJSON.getJSONObject("cases");
 
+                        // On récupère les trois lignes du carton.
                         ligne1 = casesJSON.getJSONArray("ligne1");
                         ligne2 = casesJSON.getJSONArray("ligne2");
                         ligne3 = casesJSON.getJSONArray("ligne3");
 
+                        // On crée un nouveau tableau servant à stocker les données des cases du carton.
                         casesCarton = new CaseCarton[Constants.NB_LIGNES_CARTON][Constants.NB_COLONNES_CARTON];
 
                         ligne = 0;
                         colonne = 0;
 
-                        // Pour chaque valeurs de case du carton contenues dans le JSON
+                        // Pour chaque valeurs de case de la ligne 1
                         for (int j = 0; j < ligne1.length(); j++) {
+                            // On récupère la valeur de la case.
                             valeurCase = (int) ligne1.get(j);
 
+                            // On affecte la valeur de la case à la matrice casesCarton.
                             casesCarton[ligne][colonne] = new CaseCarton();
                             casesCarton[ligne][colonne].setValeur(valeurCase);
 
@@ -249,6 +276,7 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
                         ligne++;
                         colonne = 0;
 
+                        // Idem pour la ligne 2
                         for (int j = 0; j < ligne2.length(); j++) {
                             valeurCase = (int) ligne2.get(j);
 
@@ -263,6 +291,7 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
                         ligne++;
                         colonne = 0;
 
+                        // Idem pour la ligne 3
                         for (int j = 0; j < ligne1.length(); j++) {
                             valeurCase = (int) ligne3.get(j);
 
@@ -274,19 +303,26 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
                             }
                         }
 
+                        // On crée un objet Carton avec les cases précédemment créées.
                         carton = new Carton(casesCarton);
 
+                        // On extrait l'identifiant du carton depuis le JSON.
                         id = cartonJSON.get("id").toString();
                         idInt = Integer.valueOf(id);
 
+                        // On affecte au carton l'identifiant extrait au dessus.
                         carton.setId(idInt);
+                        // On affecte au carton le joueur.
                         carton.setPersonne(joueur);
+                        // On ajoute le carton à la liste des cartons.
                         cartons.add(carton);
                     }
 
-                    isCartonsArrives = true;
+                    // On affecte les cartons au plateau.
                     plateau.setCartons(cartons);
+                    // On affecte au plateau le joueur.
                     plateau.setJoueur(joueur);
+                    // On redessine le plateau.
                     plateau.invalidate();
                 } catch (JSONException e) {
                     AccueilActivity.afficherMessage(e.getMessage(), false, getSupportFragmentManager());
@@ -301,19 +337,22 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
             }
             else {
                 try {
+                    // On tente de caster la réponse en JSONObject.
                     JSONObject jo = new JSONObject(reponse);
                     Object objErreur = jo.opt("erreur");
 
+                    // Si la réponse correspond à une erreur, on l'affiche.
                     if (objErreur != null) {
                         message = (String)objErreur;
                         AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
                     } else {
+                        // Sinon, on va chaercher la clé permettant de récupérer le statut de la quine.
                         cleRecuperationQuine = jo.getString("cle");
                         message = getResources().getString(R.string.texte_demande_quine_envoyee);
                         AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
+                        // On lance le Runnable servant à récupérer le statut de la quine.
+                        runThread();
                     }
-
-                    runThread();
                 }
                 catch(JSONException e) {
                     AccueilActivity.afficherMessage(e.getMessage(), false, getSupportFragmentManager());
@@ -323,58 +362,54 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
         else if(source == "recuperationQuine") {
             if(isErreur) {
                 isQuineRecuperee = true;
-                System.out.println("isQuineRecuperee(1)");
             }
             else {
                 try {
+                    // On tente de caster la réponse en JSONObject.
                     JSONObject jo = new JSONObject(reponse);
                     Object objErreur = jo.opt("erreur");
 
+                    // Si la réponse correspond à une erreur, on l'affiche et on indique que le statut de la quine a été récupéré.
                     if (objErreur != null) {
-                        longRunningTaskFuture.cancel(true);
-                       // runnableMAJInfosTablette.run();
                         message = (String) objErreur;
                         AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
                         isQuineRecuperee = true;
-                        System.out.println("isQuineRecuperee(2)");
                     } else {
+                        // On va chercher l'état de validation de la quine.
                         String etat = jo.getString("etat");
 
+                        // Si la quine est validée, on l'affiche à l'utilisateur et on indique que le statut de la quine a été récupéré.
                         if(etat.equals("valide")) {
-                            longRunningTaskFuture.cancel(true);
                             isQuineRecuperee = true;
-                            System.out.println("isQuineRecuperee(3)");
                             message = getResources().getString(R.string.texte_demande_quine_validee);
                             AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
-                            //runThreadMAJInfosTablette();
                         }
+                        // Si la quine est invalidée, on l'affiche à l'utilisateur et on indique que le statut de la quine a été récupéré.
                         else if(etat.equals("invalide")) {
-                            longRunningTaskFuture.cancel(true);
-                          //  runnableMAJInfosTablette.run();
                             isQuineRecuperee = true;
-                            System.out.println("isQuineRecuperee(4)");
                             message = getResources().getString(R.string.texte_demande_quine_invalidee);
                             AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
                         }
+                        // Si la quine n'est pas en attente de validation, on indique que le statut de la quine a été récupéré.
                         else if(!(etat.equals("attente"))) {
-                            longRunningTaskFuture.cancel(true);
-                           // runnableMAJInfosTablette.run();
                             isQuineRecuperee = true;
-                            System.out.println("isQuineRecuperee(5)");
                         }
                     }
                 }
                 catch (JSONException e) {
-                    e.printStackTrace();
+                    AccueilActivity.afficherMessage(e.getMessage(), false, getSupportFragmentManager());
+                    isQuineRecuperee = true;
                 }
             }
 
+            // Si le statut de la quine a été récupéré, on désactive le bouton Quine et on arrète la longRunningTask.
             if(isQuineRecuperee) {
                 plateau.setBoutonQuineInactif();
                 plateau.invalidate();
                 longRunningTaskFuture.cancel(true);
             }
 
+            // On envoie une requête permettant de mettre à jour les informations de la tablette/téléphone.
             String email = sharedPref.getString("emailUtilisateur", "");
             String mdp = sharedPref.getString("mdpUtilisateur", "");
             String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIParticipant + "/participant/recuperation-infos-partie?email=" + email +
@@ -384,19 +419,23 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
 
         }
         else if(source == "obtentionInfosPersonne") {
+            // S'il y a une erreur lors de l'obtention des informations de la personne, on l'affiche.
             if(isErreur) {
                 message = "Erreur lors de l'obtention des informations de la personne : " + reponse;
                 AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
             }
             else {
                 try {
+                    // On tente de caster la réponse en JSONObject.
                     JSONObject jo = new JSONObject(reponse);
                     Object objErreur = jo.opt("erreur");
 
+                    // Si la réponse correspond à une erreur, on l'affiche.
                     if (objErreur != null) {
                         message = (String) objErreur;
                         AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
                     } else {
+                        // Sinon, on construit un objet Personne avec les informations reçues.
                         joueur = new Personne();
                         joueur.setId(Integer.valueOf(jo.get("id").toString()));
                         joueur.setNom(jo.get("nom").toString());
@@ -416,6 +455,7 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
             }
         }
         else if(source == "majInfosTablette") {
+            // S'il y a une erreur lors de la mise à jour des informations de la tablette/téléphone, on l'affiche.
             if(isErreur) {
                 message = "Erreur lors de la mise à jour des informations de la tablette : " + reponse;
 
@@ -428,9 +468,11 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
             }
             else {
                 try {
+                    // On tente de caster la réponse en JSONObject.
                     JSONObject jo = new JSONObject(reponse);
                     Object objErreur = jo.opt("erreur");
 
+                    // Si la réponse correspond à une erreur, on l'affiche.
                     if (objErreur != null) {
                         message = (String) objErreur;
                         AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
@@ -441,6 +483,7 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
                         boolean isLotCartonPlein, isPartieTerminee = false;
 
                         try {
+                            // On récupère le numéro en-cours.
                             numeroEnCours = jo.getInt("numeroEnCours");
 
                             // Si le numéro en-cours est égal à -1, la partie est terminée
@@ -452,6 +495,7 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
                             numeroEnCours = -1;
                         }
 
+                        // On récupère le lot en cours et une information indiquant si le lot en cours est à la ligne ou au carton plein.
                         lotEnCours = jo.getString("lotEnCours");
                         isLotCartonPlein = jo.getBoolean("lotCartonPlein");
 
@@ -469,6 +513,7 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
                         plateau.setNumeroEnCours(numeroEnCours);
                         plateau.setLotEnCours(lotEnCours);
                         plateau.setLotCartonPlein(isLotCartonPlein);
+                        // On redessine la vue plateau.
                         plateau.invalidate();
                     }
                 }
@@ -477,8 +522,51 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
                     AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
                 }
             }
+        }
+        else if(source == "enregistrerConnexionAPartie") {
+            // S'il y a une erreur lors de l'enregistrement de la connexion à la partie, on l'affiche.
+            if(isErreur) {
+                AccueilActivity.afficherMessage("Erreur lors de l'enregistrement de la connexion à la partie : " + reponse, false, getSupportFragmentManager());
+            }
+            else {
+                try {
+                    // On caste la réponse en JSONObject.
+                    JSONObject jo = new JSONObject(reponse);
 
-            isMAJInfosTabletteEnCours = false;
+                    Object objErreur = jo.opt("erreur");
+
+                    // Si la réponse correspond à une erreur, on l'affiche.
+                    if (objErreur != null) {
+                        AccueilActivity.afficherMessage((String) objErreur, false, getSupportFragmentManager());
+                    }
+                }
+                catch(JSONException e) {
+                    AccueilActivity.afficherMessage(e.getMessage(), false, getSupportFragmentManager());
+                }
+            }
+        }
+        else if(source == "supprimerEnregistrementConnexionAPartie") {
+            // S'il y a une erreur lors de la suppression de l'enregistrement de la connexion à la partie, on l'affiche.
+            if(isErreur) {
+                AccueilActivity.afficherMessage("Erreur lors de la suppression de l'enregistrement de la connexion à la partie : " + reponse,
+                        false, getSupportFragmentManager());
+            }
+            else {
+                try {
+                    // On caste la réponse en JSONObject.
+                    JSONObject jo = new JSONObject(reponse);
+
+                    Object objErreur = jo.opt("erreur");
+
+                    // Si la réponse correspond à une erreur, on l'affiche.
+                    if (objErreur != null) {
+                        AccueilActivity.afficherMessage((String) objErreur, false, getSupportFragmentManager());
+                    }
+                }
+                catch(JSONException e) {
+                    AccueilActivity.afficherMessage(e.getMessage(), false, getSupportFragmentManager());
+                }
+            }
         }
     }
 
@@ -488,9 +576,9 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
 
         // On construit le plateau de jeu.
         plateau = new Plateau(this);
-        dateDerniereMAJInfos = new Date();
 
         Intent intent = getIntent();
+        // On récupère l'identifiant de la partie.
         idPartie = intent.getIntExtra("idPartie", -1);
 
         sharedPref = getSharedPreferences("MyData", Context.MODE_PRIVATE);
@@ -499,7 +587,7 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
         adresseServeur = sharedPref.getString("AdresseServeur", "");
 
         // On initialise le client STOMP.
-        clientStomp = new ClientStomp(getApplicationContext(), idPartie, this);
+        clientStomp = new ClientStomp(getApplicationContext(), idPartie, this, null, adresseServeur, getSupportFragmentManager(), sharedPref);
 
 
         // Si l'adresse du serveur n'est pas renseignée, on affiche un message.
@@ -510,14 +598,12 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
         else {
             String email = sharedPref.getString("emailUtilisateur", "");
 
+            // On envoie une requête permettant de récupérer les informations du participant.
             String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIParticipant + "/participant/get_infos_personne?email=" + email;
             RequeteHTTP requeteHTTP = new RequeteHTTP(getBaseContext(),
                     adresse, MainActivity.this);
             requeteHTTP.traiterRequeteHTTPJSON(MainActivity.this, "ObtentionInfosPersonne", "GET", "", getSupportFragmentManager());
         }
-
-        // On lance le thread de mise à jour des informations de la tablette/téléphone.
-        runThreadMAJInfosTablette();
 
         // S'il y a un savedInstanceState déjà enregistré (rotation d'écran)
         if(savedInstanceState != null) {
@@ -577,13 +663,13 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 // Déclarations
-                float x = event.getX();
-                float y = event.getY();
+                float x = event.getX(); // On récupère la position en X du clic.
+                float y = event.getY(); // On récupère la position en Y du clic.
                 String id;
+                // On récupère tous les éléments cliquables du plateau.
                 ArrayList<ElementCliquable> listeElementsCliquables = plateau.getListeElementsCliquables();
                 boolean elementTrouve = false;
                 int i = 0;
-
 
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_UP:
@@ -599,10 +685,10 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
                                 id = listeElementsCliquables.get(i).getId();
 
                                 if(id == "boutonRalentirPartie") {
-
+                                    // Non implémenté
                                 }
                                 else if(id == "boutonAccelererPartie") {
-
+                                    // Non implémenté
                                 }
                                 else if(id == "boutonQuine") {
                                     // Si l'adresse du serveur n'est pas renseignée
@@ -611,17 +697,20 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
                                         AccueilActivity.afficherMessage(messageErreur, false, getSupportFragmentManager());
                                     }
                                     else {
+                                        // On active le bouton Quine.
                                         plateau.setBoutonQuineActif();
 
                                         // On va chercher l'email et le mot de passe de l'utilisateur dans les SharedPreferences.
                                         String email = sharedPref.getString("emailUtilisateur", "");
                                         String mdp = sharedPref.getString("mdpUtilisateur", "");
 
+                                        // On envoie une requête indiquant la déclaration de la quine.
                                         String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIParticipant
                                                 + "/participant/envoi-quine?email=" + email + "&mdp=" + mdp + "&idPartie=" + idPartie
                                                 + "&idCarton=" + idDernierCartonUtilise;
                                         RequeteHTTP requeteHTTP = new RequeteHTTP(getApplicationContext(), adresse, MainActivity.this);
                                         requeteHTTP.traiterRequeteHTTPJSON(MainActivity.this, "EnvoiQuine", "POST", "", getSupportFragmentManager());
+                                        // On redessine le plateau pour mettre à jour le bouton Quine.
                                         plateau.invalidate();
                                     }
                                 }
@@ -689,6 +778,7 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
                                     }
                                 }
                                 else if(id == "boutonQuitter") {
+                                    // Si on clique sur le bouton Quitter, on affiche un message demandant si on souhaite bien quitter.
                                     HashMap<String, String> args = new HashMap<>();
                                     OuiNonDialogFragment ondf = new OuiNonDialogFragment("Etes-vous sûr de vouloir quitter ?", "quitter", "nePasQuitter", args);
                                     ondf.show(getSupportFragmentManager(), "");
@@ -698,23 +788,11 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
                             i++;
                         }
 
+                        // Si le client stomp n'est pas créé ou s'il n'est pas connecté, on va le créer/re-créer.
                         if(clientStomp.equals(null) || (!clientStomp.isConnected())) {
-                            clientStomp = new ClientStomp(getApplicationContext(), idPartie, MainActivity.this);
+                            clientStomp = new ClientStomp(getApplicationContext(), idPartie, MainActivity.this, null,
+                                    adresseServeur, getSupportFragmentManager(), sharedPref);
                         }
-
-                        /*Calendar maintenant = Calendar.getInstance();
-                        maintenant.add(Calendar.SECOND, -10);
-
-                        if((!MainActivity.this.isMAJInfosTabletteEnCours) || (dateDerniereMAJInfos.before(maintenant.getTime()))) {
-                            MainActivity.this.isMAJInfosTabletteEnCours = true;
-                            String email = sharedPref.getString("emailUtilisateur", "");
-                            String mdp = sharedPref.getString("mdpUtilisateur", "");
-                            String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIParticipant + "/participant/recuperation-infos-partie?email=" + email +
-                                    "&mdp=" + mdp + "&idPartie=" + idPartie;
-                            RequeteHTTP requeteHTTP = new RequeteHTTP(getApplicationContext(), adresse, MainActivity.this);
-                            Log.d("MAJInfosTablette", "Mise à jour des informmations de la tablette.");
-                            requeteHTTP.traiterRequeteHTTPJSON(MainActivity.this, "MAJInfosTablette", "GET", "", getSupportFragmentManager());
-                        }*/
 
                         break;
                 }
@@ -728,9 +806,7 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
     protected void onDestroy() {
         super.onDestroy();
 
-        if(taskMAJInfosTablette != null)
-            taskMAJInfosTablette.cancel(true);
-
+        // Quand on va détruire l'activité, si le client STOMP est initialisé, on va demander sa déconnection.
         if(!clientStomp.equals(null))
             clientStomp.deconnecterClientStomp();
     }
@@ -739,6 +815,7 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        // Sauvegarde de valeurs avant rotation écran.
         if(cartons != null)
             outState.putParcelableArrayList("cartons", cartons);
 
@@ -747,6 +824,10 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
         outState.putBoolean("isLotEnCoursCartonPlein", isLotEnCoursCartonPlein);
     }
 
+    /**
+     * Implémentation de la fonction onFinishEditDialog de l'interface ValidationDialogListener.
+     * @param revenirAAccueil : true si on doit revenir à l'activité appelante, false sinon.
+     */
     @Override
     public void onFinishEditDialog(boolean revenirAAccueil) {
         if(revenirAAccueil) {
@@ -755,6 +836,13 @@ public class MainActivity extends AppCompatActivity implements ValidationDialogF
         }
     }
 
+    /**
+     * Implémentation de la fonction onFinishEditDialog de l'interface OuiNonDialogListener.
+     * @param nomActionOui : nom de l'action déclenchée lors du clic sur le bouton Oui.
+     * @param nomActionNon : nom de l'action déclenchée lors du clic sur le bouton Non.
+     * @param isChoixOui : true si clic sur le bouton Oui, false sinon.
+     * @param args : arguments.
+     */
     @Override
     public void onFinishEditDialog(String nomActionOui, String nomActionNon, boolean isChoixOui, HashMap<String, String> args) {
         // Si choix = Oui

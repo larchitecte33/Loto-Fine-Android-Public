@@ -1,9 +1,15 @@
 package com.projects.loto_fine.classes_metier;
 
+/**
+ * Classe qui représente une question.
+ * Cette classe fait partie du modèle.
+ */
 public class Question {
-    private int id, reponseSelectionnee;
-    private String texte;
+    private int id; // Identifiant de la question
+    private int reponseSelectionnee; // Identifiant de la réponse sélectionnée
+    private String texte; // Texte de la question
 
+    // Accesseurs
     public int getId() {
         return id;
     }

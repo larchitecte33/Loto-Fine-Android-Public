@@ -1,19 +1,18 @@
 package com.projects.loto_fine.classes_metier;
 
 /**
- * Classe qui représente une case d'un carton de quine
+ * Classe qui représente une case d'un carton de loto
  * Cette classe fait partie du modèle.
  */
 public class CaseCarton {
-    private int id;
-    private int valeur;
-    private int posX;
-    private int posY;
-    private boolean isOccupee;
+    private int id; // L'identifiant de la case.
+    private int valeur; // La valeur de la case (-1 pour une case vide).
+    private int posX; // La position en X de la case.
+    private int posY; // La position en Y de la case.
+    private boolean isOccupee; // True si la case occupée, false sinon.
 
     // Constructeur par défaut
     public CaseCarton() {
-
     }
 
     // Constructeur
@@ -25,6 +24,7 @@ public class CaseCarton {
         this.isOccupee = isOccupee;
     }
 
+    // Accesseurs
     public int getId() {
         return id;
     }

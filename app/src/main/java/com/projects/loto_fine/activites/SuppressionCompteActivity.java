@@ -23,12 +23,23 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Cette activité est affichée lors du clic sur le bouton ME DESINSCRIRE de l'activité AccueilActivity.
+ * Elle permet à l'utilisateur de supprimer son compte.
+ */
 public class SuppressionCompteActivity extends AppCompatActivity implements ValidationDialogFragment.ValidationDialogListener {
 
     private String email, mdp;
     private String adresseServeur;
     private SharedPreferences sharedPref;
 
+    /**
+     * Fonction qui traite les réponses aux requêtes HTTP.
+     * Réponses traitées : obtentionInfosPersonne, rechercheListeInscriptions et suppressionCompte.
+     * @param source : action ayant exécutée la requête.
+     * @param reponse : reponse à la requête.
+     * @param isErreur : y a-t-il eu une erreur lors de l'envoi de la requête.
+     */
     public void TraiterReponse(String source, String reponse, boolean isErreur) {
         String message = "";
         ValidationDialogFragment vdf;
@@ -36,21 +47,27 @@ public class SuppressionCompteActivity extends AppCompatActivity implements Vali
         JSONObject jo;
 
         if (source == "obtentionInfosPersonne") {
+            // S'il y a une erreur lors de la recherche des informations de la personne, on l'affiche.
             if(isErreur) {
                 AccueilActivity.afficherMessage("Erreur lors de la recherche des informations de la personne : " + reponse, false, getSupportFragmentManager());
             }
             else {
                 try {
+                    // On tente de caster la réponse en JSONObject.
                     jo = new JSONObject(reponse);
                     Object objErreur = jo.opt("erreur");
 
+                    // Si on a une erreur, on l'affiche.
                     if (objErreur != null) {
                         message = (String) objErreur;
                         AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
-                    } else if(jo.toString().equals("{}")) {
+                    }
+                    // Si le JSON renvoyé est vide, on affiche une erreur.
+                    else if(jo.toString().equals("{}")) {
                         AccueilActivity.afficherMessage("Le compte n'a pas été trouvé.", false, getSupportFragmentManager());
                     }
                     else {
+                        // Envoi d'une requête permettant de rechercher les inscriptions de la personne dans le futur.
                         String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIParticipant + "/participant/obtenir_liste_inscriptions?" +
                                 "email=" + AccueilActivity.encoderECommercial(email) +
                                 "&mdp=" + AccueilActivity.encoderECommercial(mdp) +
@@ -65,6 +82,7 @@ public class SuppressionCompteActivity extends AppCompatActivity implements Vali
             }
         }
         else if (source == "rechercheListeInscriptions") {
+            // S'il y a une erreur lors de la recherche de la liste des inscriptions de la personne, on l'affiche.
             if (isErreur) {
                 message = "Une erreur est survenue : ";
                 AccueilActivity.afficherMessage(message + reponse, false, getSupportFragmentManager());
@@ -77,6 +95,7 @@ public class SuppressionCompteActivity extends AppCompatActivity implements Vali
                     // On récupère la liste des inscriptions
                     ja = new JSONArray(reponse);
 
+                    // On parcourt la liste des inscriptions de la personne.
                     for(int i = 0 ; i < ja.length() ; i++) {
                         jo = ja.getJSONObject(i);
                         jo = jo.getJSONObject("partie");
@@ -93,16 +112,19 @@ public class SuppressionCompteActivity extends AppCompatActivity implements Vali
 
                         // Si la date/heure de début de la partie est correcte.
                         if (!isExceptionDateHeurePartie) {
+                            // Si la date/heure de début de la partie est dans le futur
                             if(dateHeurePartie.after(new Date())) {
                                 existeInscriptionFuture = true;
                             }
                         }
                     }
 
+                    // S'il existe une inscription dans le futur pour la personne, on affiche une erreur.
                     if(existeInscriptionFuture) {
                         AccueilActivity.afficherMessage("Vous êtes inscrit pour une partie qui n'a pas commencé. Veuillez vous désinscrire de cette partie.",
                                 false, getSupportFragmentManager());
                     }
+                    // Sinon, on peut supprimer le compte.
                     else {
                         String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIParticipant + "/participant/suppression-compte?" +
                                 "email=" + AccueilActivity.encoderECommercial(email) +
@@ -132,26 +154,32 @@ public class SuppressionCompteActivity extends AppCompatActivity implements Vali
             }
         }
         else if (source == "suppressionCompte") {
+            // S'il y a une erreur lors de la suppression du compte de la personne, on l'affiche.
             if (isErreur) {
                 message = "Une erreur est survenue : ";
                 AccueilActivity.afficherMessage(message + reponse, false, getSupportFragmentManager());
             } else {
                 try {
+                    // On tente de caster la réponse en JSONObject.
                     jo = new JSONObject(reponse);
                     Object objErreur = jo.opt("erreur");
 
+                    // Si la réponse correspond à une erreur, on l'affiche.
                     if (objErreur != null) {
                         message = (String) objErreur;
                         AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
                     }
+                    // Si la réponse contient une clé message avec une valeur OK, alors le compte a bien été supprimé.
                     else if(jo.getString("message").equals("OK")) {
                         AccueilActivity.afficherMessage("Le compte a bien été supprimé.", false, getSupportFragmentManager());
 
+                        // On déconnecte l'utilisateur.
                         SharedPreferences.Editor edit = sharedPref.edit();
                         edit.putString("nomUtilisateur", "anonymous");
                         edit.putString("emailUtilisateur", "");
                         edit.commit();
 
+                        // On retourne sur l'accueil.
                         Intent intent = new Intent(getApplicationContext(), AccueilActivity.class);
                         startActivity(intent);
                     }
@@ -171,6 +199,7 @@ public class SuppressionCompteActivity extends AppCompatActivity implements Vali
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_suppression_compte);
 
+        // Récupération des composants.
         Button btnSupprimer = findViewById(R.id.suppression_compte_btn_supprimer);
         Button btnNePasSupprimer = findViewById(R.id.suppression_compte_btn_ne_pas_supprimer);
 
@@ -196,6 +225,7 @@ public class SuppressionCompteActivity extends AppCompatActivity implements Vali
             }
         }
 
+        // Clic sur le bouton "JE NE VEUX PAS SUPPRMER MON COMPTE".
         btnNePasSupprimer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -204,6 +234,7 @@ public class SuppressionCompteActivity extends AppCompatActivity implements Vali
             }
         });
 
+        // Clic sur le bouton "JE CONFIRME, JE SOUHAITE SUPPRIMER MON COMPTE"
         btnSupprimer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -217,6 +248,10 @@ public class SuppressionCompteActivity extends AppCompatActivity implements Vali
         });
     }
 
+    /**
+     * Implémentation de la fonction onFinishEditDialog de l'interface ValidationDialogListener.
+     * @param revenirAAccueil : true si on doit revenir à l'activité appelante, false sinon.
+     */
     @Override
     public void onFinishEditDialog(boolean revenirAAccueil) {
         if(revenirAAccueil) {

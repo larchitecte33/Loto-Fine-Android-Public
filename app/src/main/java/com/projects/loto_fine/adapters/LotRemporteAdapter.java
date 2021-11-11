@@ -22,13 +22,23 @@ import com.projects.loto_fine.classes_utilitaires.OuiNonDialogFragment;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+/**
+ * ArrayAdapter permettant l'affichage des éléments de la liste des lots remportés par un participant.
+ */
 public class LotRemporteAdapter extends ArrayAdapter<Lot> {
     private final Context context;
-    private LinkedList<Lot> lots;
+    private LinkedList<Lot> lots; // Liste des lots à afficher.
     private AppCompatActivity activity;
     private int idLot;
     private String adresseRetrait, cpRetrait, villeRetrait, nomLot;
 
+    /**
+     * Constructeur
+     * @param activity : activité appelante.
+     * @param context : contexte de l'activité appelante.
+     * @param ressource : ID du layout affichant un élément de la liste des lots.
+     * @param lots : liste des lots à afficher.
+     */
     public LotRemporteAdapter(AppCompatActivity activity, Context context, int ressource, LinkedList<Lot> lots) {
         super(context, ressource, lots);
         this.activity = activity;
@@ -36,15 +46,28 @@ public class LotRemporteAdapter extends ArrayAdapter<Lot> {
         this.lots = lots;
     }
 
+    /**
+     * Fonction utilisée pour convertir un objet de la liste des lots remportés en vue.
+     * @param position : la position de l'item dans l'ensemble de données de l'adapter.
+     * @param convertView : l'ancienne vue à réutiliser (si c'est possible, pour des questions de performances).
+     * @param parent : vue contenant cette vue.
+     * @return la vue qui affiche les données à la position d'index position.
+     */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        // S'il n'existe pas de vue qu'on peut réutiliser pour afficher la vue en cours d'affichage, on va la construire.
         if (convertView == null) {
+            // On récupère une instance de LayoutInflater standard qui est déjà connectée au contexte actuel et correctement configurée pour l'appareil.
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            // On construit un objet View à partir du fichier XML R.layout.activity_mes_lots_adapter
             convertView = inflater.inflate(R.layout.activity_mes_lots_adapter, parent, false);
-        } else {
+        }
+        // Sinon, on va la réutiliser.
+        else {
             convertView = (LinearLayout) convertView;
         }
 
+        // Récupération des composants.
         TextView tvNomLot = (TextView)convertView.findViewById(R.id.mes_lots_adapter_nom_lot);
         TextView tvLieuRetrait = (TextView)convertView.findViewById(R.id.mes_lots_adapter_lieu_retrait);
         TextView tvLotExpedie = (TextView)convertView.findViewById(R.id.mes_lots_adapter_lot_expedie);
@@ -58,6 +81,7 @@ public class LotRemporteAdapter extends ArrayAdapter<Lot> {
         btMExpedierLot.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.violet));
         btMExpedierLot.setTextColor(ContextCompat.getColor(getContext(), R.color.vert));
 
+        // Récupération des valeurs de l'item affiché.
         idLot = lots.get(position).getId();
         nomLot = lots.get(position).getNom();
         adresseRetrait = lots.get(position).getAdresseRetrait();
@@ -98,14 +122,17 @@ public class LotRemporteAdapter extends ArrayAdapter<Lot> {
             tvLotExpedie.setVisibility(View.GONE);
         }
 
+        // Clic sur le bouton Retirer sur place.
         btRetirerSurPlace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Récupération des valeurs de l'item cliqué.
                 idLot = lots.get(position).getId();
                 adresseRetrait = lots.get(position).getPartie().getAdresse();
                 cpRetrait = lots.get(position).getPartie().getCp();
                 villeRetrait = lots.get(position).getPartie().getVille();
 
+                // Le fragment OuiNonDialogFragment va être utilisé pour faire passer des valeurs à l'activité.
                 HashMap<String, String> args = new HashMap<>();
                 args.put("idLot", String.valueOf(idLot));
                 args.put("adresseRetrait", adresseRetrait);
@@ -118,9 +145,11 @@ public class LotRemporteAdapter extends ArrayAdapter<Lot> {
             }
         });
 
+        // Clic sur le bouton Me l'expédier.
         btMExpedierLot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Récupération des valeurs de l'item cliqué.
                 idLot = lots.get(position).getId();
                 nomLot = lots.get(position).getNom();
 

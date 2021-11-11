@@ -1,11 +1,16 @@
 package com.projects.loto_fine.classes_metier;
 
+/**
+ * Classe qui représente un participant classé.
+ * Cette classe fait partie du modèle.
+ */
 public class ParticipantClasse extends Personne {
-    private int numeroClassement;
-    private int nbLotsGagnes;
-    private int nbParticipations;
-    private float nbMoyenCartons;
+    private int numeroClassement; // Numéro du classement
+    private int nbLotsGagnes; // Nombre de lots gagnés
+    private int nbParticipations; // Nombre de participations
+    private float nbMoyenCartons; // Nombre moyen de cartons
 
+    // Accesseurs
     public int getNumeroClassement() {
         return numeroClassement;
     }

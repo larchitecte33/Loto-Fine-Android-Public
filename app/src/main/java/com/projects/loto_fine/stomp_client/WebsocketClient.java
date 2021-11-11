@@ -11,6 +11,8 @@ import ua.naiksoftware.stomp.Stomp;
 import ua.naiksoftware.stomp.StompClient;
 import ua.naiksoftware.stomp.dto.*;
 
+// Pour tests
+// Pas utilisé
 public class WebsocketClient {
     String WEBSOCKET_CONNECT_URL="ws://example.com/ws";
     String WEBSOCKET_TOPIC="/user/queue/";

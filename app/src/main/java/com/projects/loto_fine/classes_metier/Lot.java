@@ -1,15 +1,19 @@
 package com.projects.loto_fine.classes_metier;
 
+/**
+ * Classe qui représente un lot d'une partie de loto.
+ * Cette classe fait partie du modèle.
+ */
 public class Lot {
-    private int id;
-    private String nom;
-    private double valeur;
-    private int position;
-    private boolean auCartonPlein;
-    private boolean enCoursDeJeu;
-    private String adresseRetrait, cpRetrait, villeRetrait;
-    private Partie partie;
-    private Personne gagnant;
+    private int id; // Identifiant du lot
+    private String nom; // Libellé du lot
+    private double valeur; // Valeur du lot en euros
+    private int position; // Position du lot dans la partie
+    private boolean auCartonPlein; // Le lot est-il au carton plein ?
+    private boolean enCoursDeJeu; // Le lot est-il en cours de jeu ?
+    private String adresseRetrait, cpRetrait, villeRetrait; // Adresse, code postal et ville de retrait du lot.
+    private Partie partie; // Partie dans laquelle est mis en jeu le lot.
+    private Personne gagnant; // Personne ayant remporté le lot.
 
     // Constructeur
     public Lot(int id, String nom, double valeur, int position, boolean auCartonPlein, boolean enCoursDeJeu, Partie partie) {
@@ -24,9 +28,9 @@ public class Lot {
 
     // Constructeur par défaut
     public Lot() {
-
     }
 
+    // Accesseurs
     public int getId() {
         return id;
     }

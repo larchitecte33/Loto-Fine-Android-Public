@@ -67,6 +67,14 @@
         android:layout_marginLeft="50px"
         android:text=""
         android:textSize="@dimen/text_size"></TextView>
+    <TextView
+        android:id="@+id/recherche_partie_adapter_montant_a_regler"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="50px"
+        android:text=""
+        android:textSize="@dimen/text_size"></TextView>
     <Button
         android:id="@+id/recherche_partie_adapter_btn_inscription_partie"
         android:layout_width="wrap_content"

@@ -14,6 +14,10 @@ import android.widget.EditText;
 import com.projects.loto_fine.R;
 import com.projects.loto_fine.classes_utilitaires.ValidationDialogFragment;
 
+/**
+ * Cette activité est affichée lors du clic sur le bouton PARAMETRES de l'activité AccueilActivity.
+ * Elle permet à l'utilisateur de consulter et modifier les paramètres de l'application.
+ */
 public class ParametresActivity extends AppCompatActivity {
 
     private ValidationDialogFragment vdf;
@@ -23,8 +27,8 @@ public class ParametresActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parametres);
 
+        // Récupération des composants.
         EditText editAdresseServeur = findViewById(R.id.edit_adresse_serveur);
-        EditText editNbSecondesAvantMAJInfosTablette = findViewById(R.id.edit_nb_secondes_avant_maj_infos_tablette);
         Button boutonValider = findViewById(R.id.bouton_valider_parametres);
         Button boutonAnnuler = findViewById(R.id.bouton_annuler_parametres);
 
@@ -37,42 +41,29 @@ public class ParametresActivity extends AppCompatActivity {
         SharedPreferences sharedPref = getSharedPreferences("MyData", Context.MODE_PRIVATE);
         editAdresseServeur.setText(sharedPref.getString("AdresseServeur", ""));
 
-        try {
-            int nbSecondes = sharedPref.getInt("NbSecondesAvantMAJInfosTablette", 0);
-            editNbSecondesAvantMAJInfosTablette.setText(String.valueOf(nbSecondes));
-        }
-        catch(Exception e) {
-            AccueilActivity.afficherMessage(e.getMessage(), false, getSupportFragmentManager());
-        }
-
+        // Clic sur le bouton Valider.
         boutonValider.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int nbSecondes = 0;
-
-                try {
-                    nbSecondes = Integer.valueOf(editNbSecondesAvantMAJInfosTablette.getText().toString());
-                }
-                catch(NumberFormatException e) {
-                    nbSecondes = 0;
-                }
-
+                // On édite les SharedPreferences.
                 SharedPreferences.Editor edit = sharedPref.edit();
-                edit.clear();
 
-                String adresseServeur = sharedPref.getString("AdresseServeur", "http://localhost:8081");
+                // On modifie l'adresse du serveur dans les SharedPreferences.
                 edit.putString("AdresseServeur", editAdresseServeur.getText().toString());
-                edit.putInt("NbSecondesAvantMAJInfosTablette", nbSecondes);
+                // On enregistre les modifications des SharedPreferences.
                 edit.commit();
 
+                // On retourne sur l'accueil.
                 Intent intent = new Intent(getApplicationContext(), AccueilActivity.class);
                 startActivity(intent);
             }
         });
 
+        // Clic sur le bouton Annuler
         boutonAnnuler.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // On retourne sur l'accueil.
                 Intent intent = new Intent(getApplicationContext(), AccueilActivity.class);
                 startActivity(intent);
             }

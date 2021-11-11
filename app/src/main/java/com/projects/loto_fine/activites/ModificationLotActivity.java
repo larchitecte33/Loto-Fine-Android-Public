@@ -21,30 +21,44 @@ import com.projects.loto_fine.classes_utilitaires.ValidationDialogFragment;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Cette activité est affichée lors du clic sur le bouton MODIFIER LE LOT de l'array adapter LotAdapter.
+ * Elle permet à l'utilisateur de modifier les informations du lot.
+ */
 public class ModificationLotActivity extends AppCompatActivity implements ValidationDialogFragment.ValidationDialogListener {
 
-    private SharedPreferences sharedPref;
-    private int idPartie;
-    private String emailAnimateur;
-    private int idLot;
-    private String nomLot, source;
-    private double valeurLot;
-    private boolean isCartonPlein;
-    private int position;
+    private SharedPreferences sharedPref; // SharedPreferences utilisé pour récupérer des valeurs stockées sur le téléphone/tablette.
+    private int idPartie; // Identifiant de la partie
+    private String emailAnimateur; // Adresse e-mail de l'animateur
+    private int idLot; // Identifiant du lot
+    private String nomLot, source; // Libellé du lot et source d'appel de la modification du lot.
+    private double valeurLot; // Valeur du lot.
+    private boolean isCartonPlein; // Le lot est-il au carton plein ?
+    private int position; // Position du lot dans la partie.
 
+    /**
+     * Fonction qui traite les réponses aux requêtes HTTP.
+     * Réponse traitée : modificationLot.
+     * @param source : action ayant exécutée la requête.
+     * @param reponse : reponse à la requête.
+     * @param isErreur : y a-t-il eu une erreur lors de l'envoi de la requête.
+     */
     public void TraiterReponse(String source, String reponse, boolean isErreur) {
         String message = "";
         ValidationDialogFragment vdf;
 
         if (source == "modificationLot") {
+            // S'il y a eu une erreur lors de la modification du lot, on l'affiche.
             if(isErreur) {
                 AccueilActivity.afficherMessage("Erreur lors de la modification du lot : " + reponse, false, getSupportFragmentManager());
             }
             else {
                 try {
+                    // On tente de caster la réponse en JSONObject.
                     JSONObject jo = new JSONObject(reponse);
                     Object objErreur = jo.opt("erreur");
 
+                    // Si la réponse correspond à une erreur, on l'affiche.
                     if (objErreur != null) {
                         message = (String) objErreur;
                         AccueilActivity.afficherMessage(message, false, getSupportFragmentManager());
@@ -65,6 +79,7 @@ public class ModificationLotActivity extends AppCompatActivity implements Valida
         setContentView(R.layout.activity_modification_lot);
 
         Intent intent = getIntent();
+        // On récupère les valeurs passées dans l'intent.
         idPartie = intent.getIntExtra("idPartie", -1);
         emailAnimateur = intent.getStringExtra("emailAnimateur");
         source = intent.getStringExtra("source");
@@ -107,7 +122,7 @@ public class ModificationLotActivity extends AppCompatActivity implements Valida
         numPickPositionLot.setMaxValue(1000);
         numPickPositionLot.setValue(position);
 
-
+        // Clic sur le bouton Annuler.
         btnAnnulerModifLot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,16 +134,19 @@ public class ModificationLotActivity extends AppCompatActivity implements Valida
             }
         });
 
+        // Clic sur le bouton Valider.
         btnValiderModifLot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 boolean erreurTrouvee = false;
                 int isALaLigne = 0;
 
+                // Si le nom du lot n'est pas renseigné, on affiche une erreur.
                 if(nomLot.equals("")) {
                     AccueilActivity.afficherMessage("Le nom du lot doit être renseigné.", false, getSupportFragmentManager());
                 }
                 else {
+                    // Si la valeur du lot n'est pas correcte, on l'affiche.
                     try {
                         valeurLot = Double.valueOf(editValeurLot.getText().toString());
                     } catch (NumberFormatException e) {
@@ -147,6 +165,7 @@ public class ModificationLotActivity extends AppCompatActivity implements Valida
                         String email = sharedPref.getString("emailUtilisateur", "");
                         String mdp = sharedPref.getString("mdpUtilisateur", "");
 
+                        // On envoie une requête pour demander la modification du lot.
                         String adresse = adresseServeur + ":" + Constants.portMicroserviceGUIAnimateur + "/animateur/modification-lot?email=" +
                                 AccueilActivity.encoderECommercial(email) +
                                 "&mdp=" + AccueilActivity.encoderECommercial(mdp) +
@@ -164,6 +183,10 @@ public class ModificationLotActivity extends AppCompatActivity implements Valida
         });
     }
 
+    /**
+     * Implémentation de la fonction onFinishEditDialog de l'interface ValidationDialogListener.
+     * @param revenirAAccueil : true si on doit revenir à l'activité appelante, false sinon.
+     */
     @Override
     public void onFinishEditDialog(boolean revenirAAccueil) {
         if(revenirAAccueil) {

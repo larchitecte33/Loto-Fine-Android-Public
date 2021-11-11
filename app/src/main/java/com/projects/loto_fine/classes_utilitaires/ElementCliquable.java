@@ -10,6 +10,7 @@ public class ElementCliquable {
     private int width; // Largeur de l'élément
     private int height; // Hauteur de l'élément
 
+    // Constructeur
     public ElementCliquable(String id, int posX, int posY, int width, int height) {
         this.id = id;
         this.posX = posX;
@@ -18,6 +19,7 @@ public class ElementCliquable {
         this.height = height;
     }
 
+    // Accesseurs
     public String getId() {
         return id;
     }
